@@ -33,9 +33,9 @@ async function run(login, password) {
 
 const [ login, password ] = process.argv.slice(2, 4)
 run(login, password)
-    .then(() => console.log('Done'))
+    .then(() => console.log('Why are you runnin\''))
     .catch(console.error)
 ```
 
 ## Contact
-You can contact `Tanuki#0003` by following this [discord's invitation]((https://discord.gg/Ctg86d4)).
+You can contact `Tanuki#0003` by following this [discord's invitation](https://discord.gg/Ctg86d4).
