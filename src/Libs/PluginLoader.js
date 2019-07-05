@@ -22,6 +22,7 @@ class PluginLoader {
     register(plugin) {
         this._register(plugin)
         this._subscribe(plugin)
+        this._buildApi(plugin)
         this._plugins.push(plugin)
         return this
     }
@@ -36,6 +37,15 @@ class PluginLoader {
         this._client.Data[information.name] = plugin.data()
         plugin._wrapper = this._client.Network.createWrapper()
         return this
+    }
+
+    _buildApi(plugin) {
+        const information = plugin.describe()
+        this._client.Api[information.name] = {}
+        for (const methodName in plugin.methods) {
+            const method = plugin.methods[methodName]
+            this._client.Api[information.name][methodName] = (...args) => method(this._context, ...args)
+        }
     }
 
     _subscribe(plugin) {

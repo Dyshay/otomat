@@ -12,6 +12,7 @@ const { generateString } = require('./Libs/Helper')
 
 module.exports = class Client {
     constructor(clientSettings) {
+        this.Api = {}
         this.Data = new DataManager(clientSettings)
         this.Network = new Network(clientSettings.primus)
         this.Plugins = new PluginLoader(this)

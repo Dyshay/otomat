@@ -1,6 +1,6 @@
 module.exports = {
     describe: () => ({
-        name: 'AuthPlugin',
+        name: 'Auth',
         description: 'Handle authentication protocol'
     }),
     data: () => ({
@@ -61,6 +61,7 @@ module.exports = {
     },
     methods: {
         play(ctx, serverId) {
+            console.log('Play ' + serverId)
             return ctx.network.sendMessage('ServerSelectionMessage', { serverId })
         }
     },
