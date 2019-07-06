@@ -1,3 +1,7 @@
+/**
+ * @class
+ * @classdesc Handle Plugins
+ */
 class PluginLoader {
     /**
      * PluginLoader's constructor
@@ -22,7 +26,7 @@ class PluginLoader {
     register(plugin) {
         this._register(plugin)
         this._subscribe(plugin)
-        this._buildApi(plugin)
+        this._feedApi(plugin)
         this._plugins.push(plugin)
         return this
     }
@@ -39,7 +43,7 @@ class PluginLoader {
         return this
     }
 
-    _buildApi(plugin) {
+    _feedApi(plugin) {
         const information = plugin.describe()
         this._client.Api[information.name] = {}
         for (const methodName in plugin.methods) {

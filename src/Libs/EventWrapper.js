@@ -21,6 +21,20 @@ module.exports = class EventWrapper {
 	}
 
 	/**
+	 * Listen to an event one time only
+	 * @param {String} eventName Name of the event to listen
+	 */
+	once(eventName) {
+		return new Promise((resolve, reject) => {
+			const callback = packet => {
+				delete this.events[eventName]
+				resolve(packet)
+			}
+			this.emitter.once(eventName, callback)
+		})
+	}
+
+	/**
 	 * Unregister all events
 	 * @returns {EventWrapper}
 	 */

@@ -33,7 +33,10 @@ module.exports = class Client {
         const { data: { token } } = await TokenManager.getToken(key)
         const sticker = generateString(15)
         this.Data.Credentials = { sticker, userToken: token, userName: login }
+        const wrapper = this.Network.createWrapper()
+        const hasServers = wrapper.once('ServersListMessage')
         this.Network.connect(Constants.Servers.Auth + '?STICKER=' + sticker)
+        return hasServers
     }
 
     mount() {
