@@ -30,15 +30,11 @@ module.exports = class Client {
         return this
     }
 
-    async connect(login, password) {
+    async authenticate(login, password) {
         const { data: { key } } = await TokenManager.getApiKey(login, password, true)
         const { data: { token } } = await TokenManager.getToken(key)
         const sticker = generateString(15)
         this.Data.Credentials = { sticker, userToken: token, userName: login }
-        const wrapper = this.Socket.createWrapper()
-        const hasServers = wrapper.once('ServersListMessage')
-        this.Socket.connect(Socket.ServerTypeEnum.LOGIN, sticker)
-        return hasServers
     }
 
     mount() {

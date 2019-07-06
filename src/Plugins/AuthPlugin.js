@@ -56,6 +56,12 @@ module.exports = {
         }
     },
     methods: {
+        connect(ctx) {
+            const wrapper = ctx.socket.createWrapper()
+            const servers = wrapper.once('ServersListMessage')
+            ctx.socket.connect('Login', ctx.rootData.Credentials.sticker)
+            return servers
+        },
         play(ctx, serverId) {
             return ctx.socket.sendMessage('ServerSelectionMessage', { serverId })
         }
