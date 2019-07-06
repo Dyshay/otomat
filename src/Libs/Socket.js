@@ -37,7 +37,7 @@ module.exports = class Socket {
 		}
 		
 		const { Primus } = this
-		const serverAddress = (serverType === Socket.ServerTypeEnum.LOGIN ? Servers.Auth : Servers.Auth) + '?STICKER=' + sticker
+		const serverAddress = (serverType === Socket.ServerTypeEnum.LOGIN ? Servers.Auth : Servers.Game) + '?STICKER=' + sticker
 		this._serverType = serverType
 		console.log(`Connecting to \`${serverType}\` server`)
 
@@ -52,36 +52,48 @@ module.exports = class Socket {
         })
 		
         this.Client
-			.on('open', () => {
-				console.log('<Socket> Connection opened.')
-				this.Dispatcher.emit('SocketConnected')
-			})
-			.on('data', packet => {
-				console.log('<Socket> Data received (' + packet._messageType + ')')
-				this.Dispatcher.emit(ucFirst(packet._messageType), packet)
-			})
-			.on('reconnect', () => {
-				console.log('<Socket> Trying to reconnect')
-				this.Dispatcher.emit('SocketReconnecting')
-			})
-			.on('error', e => {
-                console.log('<Socket> An error occured')
-				console.log(e)
-				this.Dispatcher.emit('SocketError')
-            })
-			.on('close', () => {
-				console.log('<Socket> Connection closed')
-				this.Dispatcher.emit('SocketClosed')
-			})
-			.on('end', () => {
-				console.log('<Socket> Connection ended')
-				this.Client.destroy()
-				this.Client = null
-				this.Dispatcher.emit('SocketEnded')
-            })
+			.on('open', this._OnSocketOpened.bind(this))
+			.on('data', this._OnSocketDataReceived.bind(this))
+			.on('reconnect', this._OnSocketReconnecting.bind(this))
+			.on('error', this._OnSocketError.bind(this))
+			.on('close', this._OnSocketClosed.bind(this))
+			.on('end', this._OnSocketEnded.bind(this))
+			.open()
 
-        this.Client.open()
 		return this
+	}
+
+	_OnSocketOpened() {
+		console.log('<Socket> Connection opened.')
+		this.Dispatcher.emit('SocketConnected')
+	}
+
+	_OnSocketDataReceived(packet) {
+		console.log('<Socket> Data received (' + packet._messageType + ')')
+		this.Dispatcher.emit(ucFirst(packet._messageType), packet)
+	}
+
+	_OnSocketReconnecting() {
+		console.log('<Socket> Trying to reconnect')
+		this.Dispatcher.emit('SocketReconnecting')
+	}
+
+	_OnSocketError(e) {
+		console.log('<Socket> An error occured')
+		console.log(e)
+		this.Dispatcher.emit('SocketError')
+	}
+
+	_OnSocketClosed() {
+		console.log('<Socket> Connection closed')
+		this.Dispatcher.emit('SocketClosed')
+	}
+
+	_OnSocketEnded() {
+		console.log('<Socket> Connection ended')
+		this.Client.destroy()
+		this.Client = null
+		this.Dispatcher.emit('SocketEnded')
 	}
 
 	/**

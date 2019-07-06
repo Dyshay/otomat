@@ -11,8 +11,7 @@ module.exports = {
         serverIp: null,
         serverPort: null,
         serverTicket: null,
-        sequenceNumberRequestMessageValue: 0,
-
+        sequenceNumberRequestMessageValue: 0
     }),
     subscribers: {
         OnIdentificationSuccessMessage(ctx, { login }) {
