@@ -18,7 +18,7 @@ class PluginLoader {
      */
     get _context() {
         const context = {}
-        Object.defineProperty(context, 'network', { get: () => this._client.Network })
+        Object.defineProperty(context, 'socket', { get: () => this._client.Socket })
         Object.defineProperty(context, 'rootData', { get: () => this._client.Data })
         return context
     }
@@ -39,7 +39,7 @@ class PluginLoader {
             throw new Error('A plugin with the same name are already loaded.')
 
         this._client.Data[information.name] = plugin.data()
-        plugin._wrapper = this._client.Network.createWrapper()
+        plugin._wrapper = this._client.Socket.createWrapper()
         return this
     }
 

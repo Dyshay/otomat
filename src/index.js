@@ -1,7 +1,7 @@
 const Constants = require('./Configurations/constants')
 
 const DataManager = require('./Libs/Data')
-const Network = require('./Libs/Network')
+const Socket = require('./Libs/Socket')
 const PluginLoader = require('./Libs/PluginLoader')
 const TokenManager = require('./Libs/TokenManager')
 
@@ -14,38 +14,40 @@ module.exports = class Client {
     constructor(clientSettings) {
         this.Api = {}
         this.Data = new DataManager(clientSettings)
-        this.Network = new Network(clientSettings.primus)
+        this.Socket = new Socket(clientSettings.primus)
         this.Plugins = new PluginLoader(this)
     }
 
     registerDefaultPlugins() {
         this.Plugins.register(AuthPlugin)
+        this.Plugins.register(GamePlugin)
         return this
     }
 
     unregisterDefaultPlugins() {
         this.Plugins.unregister(AuthPlugin)
+        this.Plugins.unregister(GamePlugin)
         return this
     }
 
     async connect(login, password) {
-		const { data: { key } } = await TokenManager.getApiKey(login, password, true)
+        const { data: { key } } = await TokenManager.getApiKey(login, password, true)
         const { data: { token } } = await TokenManager.getToken(key)
         const sticker = generateString(15)
         this.Data.Credentials = { sticker, userToken: token, userName: login }
-        const wrapper = this.Network.createWrapper()
+        const wrapper = this.Socket.createWrapper()
         const hasServers = wrapper.once('ServersListMessage')
-        this.Network.connect(Constants.Servers.Auth + '?STICKER=' + sticker)
+        this.Socket.connect(Socket.ServerTypeEnum.LOGIN, sticker)
         return hasServers
     }
 
     mount() {
-        this.Network.mount()
+        this.Socket.mount()
         return this
     }
 
     unmount() {
-        this.Network.unmount()
+        this.Socket.unmount()
         return this
     }
 }

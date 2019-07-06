@@ -1,24 +1,46 @@
 const { EventEmitter } = require('events')
 const EventWrapper = require('./EventWrapper')
 const { ucFirst } = require('./Helper')
+const { Servers } = require('../Configurations/constants')
 
-class Network {
+module.exports = class Socket {
 	constructor(primus) {
 		this.Primus = primus
 		this.Client = null
+		this._serverType = Socket.ServerTypeEnum.NONE
+	}
+
+	static get ServerTypeEnum() {
+		return {
+			NONE: null,
+			LOGIN: 'Login',
+			GAME: 'Game'
+		}
+	}
+
+	get serverType() {
+		return this._serverType
 	}
 
 	/**
-	 * Make and maintain connection to `serverAddress`
-	 * @param {string} serverAddress Game server endpoint
+	 * Make and maintain connection to the `serverType` corresponding server address
+	 * @param {string} phase Phase
 	 * @returns {Network}
 	 */
-	connect(serverAddress) {
+	connect(serverType, sticker) {
+		if (![ Socket.ServerTypeEnum.LOGIN, Socket.ServerTypeEnum.GAME ].includes(serverType)) {
+			throw new Error('Unable to found the corresponding server.')
+		}
+
 		if (this.Client !== null) {
 			throw new Error('A connection has already in progress.')
 		}
-		console.log('Connecting to ' + serverAddress)
+		
 		const { Primus } = this
+		const serverAddress = (serverType === Socket.ServerTypeEnum.LOGIN ? Servers.Auth : Servers.Auth) + '?STICKER=' + sticker
+		this._serverType = serverType
+		console.log(`Connecting to \`${serverType}\` server`)
+
         this.Client = new Primus(serverAddress, {
             manual: true,
             reconnect: {
@@ -31,28 +53,28 @@ class Network {
 		
         this.Client
 			.on('open', () => {
-				console.log('<Network> Connection opened.')
+				console.log('<Socket> Connection opened.')
 				this.Dispatcher.emit('SocketConnected')
 			})
 			.on('data', packet => {
-				console.log('<Network> Data received (' + packet._messageType + ')')
+				console.log('<Socket> Data received (' + packet._messageType + ')')
 				this.Dispatcher.emit(ucFirst(packet._messageType), packet)
 			})
 			.on('reconnect', () => {
-				console.log('<Network> Trying to reconnect')
+				console.log('<Socket> Trying to reconnect')
 				this.Dispatcher.emit('SocketReconnecting')
 			})
 			.on('error', e => {
-                console.log('<Network> An error occured')
+                console.log('<Socket> An error occured')
 				console.log(e)
 				this.Dispatcher.emit('SocketError')
             })
 			.on('close', () => {
-				console.log('<Network> Connection closed')
+				console.log('<Socket> Connection closed')
 				this.Dispatcher.emit('SocketClosed')
 			})
 			.on('end', () => {
-				console.log('<Network> Connection ended')
+				console.log('<Socket> Connection ended')
 				this.Dispatcher.emit('SocketEnded')
             })
 
@@ -63,7 +85,7 @@ class Network {
 	/**
 	 * Log out from the game server
 	 * @param {string} reason Reason to log-out the user
-	 * @returns {Network}
+	 * @returns {Socket}
 	 */
 	disconnect(reason) {
 		this.send('disconnecting', reason)
@@ -76,7 +98,7 @@ class Network {
 	 * Send something to the server
 	 * @param {string} call Name of the packet to send
 	 * @param {object} data JSON data to send
-	 * @returns {Network}
+	 * @returns {Socket}
 	 */
 	send(call, data) {
 		if (!this.Client) {
@@ -91,7 +113,7 @@ class Network {
 	 * Send a packet to the server
 	 * @param {string} type Name of the packet to send
 	 * @param {object} data JSON data to send
-	 * @returns {Network}
+	 * @returns {Socket}
 	 */
 	sendMessage(type, data) {
 		return this.send('sendMessage', { type, data })
@@ -107,7 +129,7 @@ class Network {
 
 	/**
 	 * Mounting
-	 * @returns {Network}
+	 * @returns {Socket}
 	 */
 	mount() {
 		this.Dispatcher = new EventEmitter()
@@ -116,7 +138,7 @@ class Network {
 
 	/**
 	 * Unmouting
-	 * @returns {Network}
+	 * @returns {Socket}
 	 * @todo Investigate for an existing reason that we can use
 	 */
 	unmount() {
@@ -128,5 +150,3 @@ class Network {
 		return this
 	}
 }
-
-module.exports = Network

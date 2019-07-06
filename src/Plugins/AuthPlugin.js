@@ -13,7 +13,7 @@ module.exports = {
     subscribers: {
         OnSocketConnected(ctx) {
             if (this.processDone) return
-            ctx.network.send('connecting', {
+            ctx.socket.send('connecting', {
                 'language': ctx.rootData.Client.language,
                 'server': 'login',
                 'client': 'android',
@@ -38,13 +38,13 @@ module.exports = {
             this.salt = salt
             this.key = key
 
-            ctx.network.send('checkAssetsVersion', {
+            ctx.socket.send('checkAssetsVersion', {
                 staticDataVersion: ctx.rootData.Client.staticDataVersion,
                 assetsVersion: ctx.rootData.Client.assetsVersion
             })
         },
         OnAssetsVersionChecked(ctx) {
-            ctx.network.send('login', {
+            ctx.socket.send('login', {
                 key: this.key,
                 salt: this.salt,
                 token: ctx.rootData.Credentials.userToken,
@@ -57,7 +57,7 @@ module.exports = {
     },
     methods: {
         play(ctx, serverId) {
-            return ctx.network.sendMessage('ServerSelectionMessage', { serverId })
+            return ctx.socket.sendMessage('ServerSelectionMessage', { serverId })
         }
     },
     mounted() {
