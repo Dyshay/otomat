@@ -54,7 +54,10 @@ module.exports = {
             return servers
         },
         play(ctx, serverId) {
-            return ctx.socket.sendMessage('ServerSelectionMessage', { serverId })
+            const wrapper = ctx.socket.createWrapper()
+            const characters = wrapper.once('CharactersListMessage')
+            ctx.socket.sendMessage('ServerSelectionMessage', { serverId })
+            return characters
         }
     },
     mounted() {
