@@ -22,7 +22,7 @@ clientSettings.staticDataVersion = null
 clientSettings.assetsVersion = null
 clientSettings.primus = require('./primus')
 
-async function run(login, password) {
+async function run(login, password, serverId, characterId) {
     const player = new Client(clientSettings)
     player.mount()
     player.registerDefaultPlugins()
@@ -31,8 +31,8 @@ async function run(login, password) {
     await player.Api.Game.play(-1)
 }
 
-const [ login, password ] = process.argv.slice(2, 4)
-run(login, password)
+const [ login, password, serverId, characterId ] = process.argv.slice(2, 4)
+run(login, password, serverId, characterId)
     .then(() => console.log('Why are you runnin\''))
     .catch(console.error)
 ```
