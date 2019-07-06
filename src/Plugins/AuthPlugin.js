@@ -4,24 +4,26 @@ module.exports = {
         description: 'Handle authentication protocol'
     }),
     data: () => ({
+        processDone: false,
         sessionId: null,
         key: null,
         salt: null,
-        serverId: null,
-        serverIp: null,
-        serverPort: null,
-        serverTicket: null,
         servers: []
     }),
     subscribers: {
         OnSocketConnected(ctx) {
+            if (this.processDone) return
             ctx.network.send('connecting', {
-                'language': 'fr',
+                'language': ctx.rootData.Client.language,
                 'server': 'login',
                 'client': 'android',
-                'appVersion': '1.16.9',
-                'buildVersion': '1.42.5'
+                'appVersion': ctx.rootData.Client.appVersion,
+                'buildVersion': ctx.rootData.Client.buildVersion
             })
+        },
+        OnSocketEnded(ctx) {
+            if (this.processDone) return
+            this.processDone = true
         },
         OnIdentificationSuccessMessage(ctx, { login }) {
             this.sessionId = login
@@ -37,8 +39,8 @@ module.exports = {
             this.key = key
 
             ctx.network.send('checkAssetsVersion', {
-                staticDataVersion: '1.11.11',
-                assetsVersion: '2.27.2b'
+                staticDataVersion: ctx.rootData.Client.staticDataVersion,
+                assetsVersion: ctx.rootData.Client.assetsVersion
             })
         },
         OnAssetsVersionChecked(ctx) {
@@ -51,17 +53,10 @@ module.exports = {
         },
         OnServersListMessage(ctx, { servers }) {
             this.servers = servers
-        },
-        OnSelectedServerDataMessage(ctx, { serverId, address, port, ticket }) {
-            this.serverId = serverId
-            this.serverIp = address
-            this.serverPort = port
-            this.serverTicket = ticket
         }
     },
     methods: {
         play(ctx, serverId) {
-            console.log('Play ' + serverId)
             return ctx.network.sendMessage('ServerSelectionMessage', { serverId })
         }
     },
