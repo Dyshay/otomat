@@ -4,7 +4,6 @@ module.exports = {
         description: 'Handle authentication protocol'
     }),
     data: () => ({
-        sessionId: null,
         key: null,
         salt: null,
         servers: []
@@ -19,9 +18,6 @@ module.exports = {
                 'appVersion': ctx.rootData.Client.appVersion,
                 'buildVersion': ctx.rootData.Client.buildVersion
             })
-        },
-        OnIdentificationSuccessMessage(ctx, { login }) {
-            this.sessionId = login
         },
         OnProtocolRequired() {
             console.log('OnProtocolRequired')
