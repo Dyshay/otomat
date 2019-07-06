@@ -4,7 +4,6 @@ module.exports = {
         description: 'Handle authentication protocol'
     }),
     data: () => ({
-        processDone: false,
         sessionId: null,
         key: null,
         salt: null,
@@ -12,7 +11,7 @@ module.exports = {
     }),
     subscribers: {
         OnSocketConnected(ctx) {
-            if (this.processDone) return
+            if (ctx.socket.serverType !== 'Login') return
             ctx.socket.send('connecting', {
                 'language': ctx.rootData.Client.language,
                 'server': 'login',
@@ -20,10 +19,6 @@ module.exports = {
                 'appVersion': ctx.rootData.Client.appVersion,
                 'buildVersion': ctx.rootData.Client.buildVersion
             })
-        },
-        OnSocketEnded(ctx) {
-            if (this.processDone) return
-            this.processDone = true
         },
         OnIdentificationSuccessMessage(ctx, { login }) {
             this.sessionId = login

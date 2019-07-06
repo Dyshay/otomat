@@ -75,6 +75,8 @@ module.exports = class Socket {
 			})
 			.on('end', () => {
 				console.log('<Socket> Connection ended')
+				this.Client.destroy()
+				this.Client = null
 				this.Dispatcher.emit('SocketEnded')
             })
 
