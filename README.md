@@ -31,7 +31,7 @@ async function run(login, password, serverId, characterId) {
     await player.Api.Game.play(-1)
 }
 
-const [ login, password, serverId, characterId ] = process.argv.slice(2, 4)
+const [ login, password, serverId, characterId ] = process.argv.slice(2, 6)
 run(login, password, serverId, characterId)
     .then(() => console.log('Why are you runnin\''))
     .catch(console.error)
