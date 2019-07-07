@@ -1,5 +1,3 @@
-const Constants = require('./configurations/constants')
-
 const DataManager = require('./libs/Data')
 const Socket = require('./libs/Socket')
 const PluginLoader = require('./libs/plugin-loader')
