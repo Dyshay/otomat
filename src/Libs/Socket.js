@@ -29,11 +29,9 @@ module.exports = class Socket {
    * @returns {Network}
    */
   connect(serverType, sticker) {
-    if (
-      ![Socket.ServerTypeEnum.LOGIN, Socket.ServerTypeEnum.GAME].includes(
-        serverType
-      )
-    ) {
+    const { LOGIN, GAME } = Socket.ServerTypeEnum
+    const isValidServer = [LOGIN, GAME].includes(serverType)
+    if (!isValidServer) {
       throw new Error('Unable to found the corresponding server.')
     }
 
