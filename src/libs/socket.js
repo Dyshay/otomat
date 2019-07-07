@@ -3,6 +3,19 @@ const EventWrapper = require('./event-wrapper')
 const { ucFirst } = require('./helper')
 const { Servers } = require('../configurations/constants')
 
+const { Signale } = require('signale')
+const signale = new Signale({
+  scope: 'socket',
+  types: {
+    packet: {
+      badge: '📦',
+      color: 'blueBright',
+      label: 'packet',
+      logLevel: 'info'
+    }
+  }
+})
+
 module.exports = class Socket {
   constructor(primus) {
     this.primus = primus
@@ -26,7 +39,7 @@ module.exports = class Socket {
   /**
    * Make and maintain connection to the `serverType` corresponding server address
    * @param {string} phase Phase
-   * @returns {Network}
+   * @returns {Socket}
    */
   connect(serverType, sticker) {
     const { LOGIN, GAME } = Socket.ServerTypeEnum
@@ -46,7 +59,6 @@ module.exports = class Socket {
       '?STICKER=' +
       sticker
     this._serverType = serverType
-    console.log(`Connecting to \`${serverType}\` server`)
 
     this.client = new this.primus(serverAddress, {
       manual: true,
@@ -71,33 +83,33 @@ module.exports = class Socket {
   }
 
   _OnSocketOpened() {
-    console.log('<Socket> Connection opened.')
+    signale.info('Connection opened')
     this.dispatcher.emit('SocketConnected')
   }
 
   _OnSocketDataReceived(packet) {
-    console.log('<Socket> Data received (' + packet._messageType + ')')
+    signale.packet(`-> ${packet._messageType}`)
     this.dispatcher.emit(ucFirst(packet._messageType), packet)
   }
 
   _OnSocketReconnecting() {
-    console.log('<Socket> Trying to reconnect')
+    signale.warn('Trying to reconnect')
     this.dispatcher.emit('SocketReconnecting')
   }
 
   _OnSocketError(e) {
-    console.log('<Socket> An error occured')
-    console.log(e)
+    signale.error('An error occured')
+    signale.error(e)
     this.dispatcher.emit('SocketError')
   }
 
   _OnSocketClosed() {
-    console.log('<Socket> Connection closed')
+    signale.info('<Socket> Connection closed')
     this.dispatcher.emit('SocketClosed')
   }
 
   _OnSocketEnded() {
-    console.log('<Socket> Connection ended')
+    signale.info('<Socket> Connection ended')
     this.client.destroy()
     this.client = null
     this.dispatcher.emit('SocketEnded')

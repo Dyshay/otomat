@@ -20,10 +20,8 @@ module.exports = {
       })
     },
     OnProtocolRequired() {
-      console.log('OnProtocolRequired')
     },
     OnConnectionFailedMessage() {
-      console.log('OnConnectionFailedMessage')
     },
     OnHelloConnectMessage(ctx, { salt, key }) {
       this.salt = salt

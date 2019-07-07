@@ -33,20 +33,20 @@ class PluginLoader {
     return this
   }
 
-  _register(plugin) {
+  _register(plugin, signale) {
     const info = plugin.describe()
     const name = ucLower(info.name)
-    console.log(info)
 
-    if (this._client.data[name] !== undefined)
+    if (this._client.data[name] !== undefined) {
       throw new Error('A plugin with the same name are already loaded.')
+    }
 
     this._client.data[name] = plugin.data()
     plugin._wrapper = this._client.socket.createWrapper()
     return this
   }
 
-  _feedApi(plugin) {
+  _feedApi(plugin, signale) {
     const info = plugin.describe()
     const name = ucLower(info.name)
 
@@ -58,14 +58,15 @@ class PluginLoader {
     }
   }
 
-  _subscribe(plugin) {
+  _subscribe(plugin, signale) {
     const info = plugin.describe()
     const name = ucLower(info.name)
     const wrapper = plugin._wrapper
 
     for (const subscriberName in plugin.subscribers) {
-      if (!/^On/.test(subscriberName))
+      if (!/^On/.test(subscriberName)) {
         throw new Error(`Invalid subscriber name <${subscriberName}>`)
+      } 
 
       const subscriber = plugin.subscribers[subscriberName]
       const eventName = subscriberName.slice(2)
