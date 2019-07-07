@@ -2,10 +2,12 @@
  * Generate a checksum (original codee from DT's sources)
  * @param {string} str String to transform
  */
-module.exports.checksum = (str) => {
-	let r = 0
-	for (let i = 0; i < str.length; i++) { r += str.charCodeAt(i) % 16 }
-	return (r % 16).toString(16).toUpperCase()
+module.exports.checksum = str => {
+  let r = 0
+  for (let i = 0; i < str.length; i++) {
+    r += str.charCodeAt(i) % 16
+  }
+  return (r % 16).toString(16).toUpperCase()
 }
 
 /**
@@ -13,10 +15,10 @@ module.exports.checksum = (str) => {
  * @returns {string}
  */
 module.exports.getRandomChar = () => {
-	let n = Math.ceil(Math.random() * 100)
-	if (n <= 40) return String.fromCharCode(Math.floor(Math.random() * 26) + 65) // Majuscule
-	if (n <= 80) return String.fromCharCode(Math.floor(Math.random() * 26) + 97) // Minuscule
-	return String.fromCharCode(Math.floor(Math.random() * 10) + 48) // Numero
+  let n = Math.ceil(Math.random() * 100)
+  if (n <= 40) return String.fromCharCode(Math.floor(Math.random() * 26) + 65) // Majuscule
+  if (n <= 80) return String.fromCharCode(Math.floor(Math.random() * 26) + 97) // Minuscule
+  return String.fromCharCode(Math.floor(Math.random() * 10) + 48) // Numero
 }
 
 // Generate string of <length> characters, Example : "O6FBjgAe3KaKyqL2XSu5B"
@@ -26,9 +28,11 @@ module.exports.getRandomChar = () => {
  * @returns {string}
  */
 module.exports.generateString = (length = 10) => {
-	let key = ''
-	for (let i = 0; i < length; i++) { key += this.getRandomChar() }
-	return key + this.checksum(key)
+  let key = ''
+  for (let i = 0; i < length; i++) {
+    key += this.getRandomChar()
+  }
+  return key + this.checksum(key)
 }
 
 module.exports.ucFirst = input => input.charAt(0).toUpperCase() + input.slice(1)
