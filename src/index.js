@@ -1,14 +1,14 @@
-const Constants = require('./Configurations/constants')
+const Constants = require('./configurations/constants')
 
-const DataManager = require('./Libs/Data')
-const Socket = require('./Libs/Socket')
-const PluginLoader = require('./Libs/PluginLoader')
-const TokenManager = require('./Libs/TokenManager')
+const DataManager = require('./libs/Data')
+const Socket = require('./libs/Socket')
+const PluginLoader = require('./libs/plugin-loader')
+const TokenManager = require('./libs/token-manager')
 
-const AuthPlugin = require('./Plugins/AuthPlugin')
-const GamePlugin = require('./Plugins/GamePlugin')
+const AuthPlugin = require('./plugins/auth.plugin')
+const GamePlugin = require('./plugins/game.plugin')
 
-const { generateString } = require('./Libs/Helper')
+const { generateString } = require('./libs/Helper')
 
 module.exports = class Client {
     constructor(clientSettings) {

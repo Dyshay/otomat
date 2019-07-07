@@ -1,5 +1,5 @@
 const axios = require('axios')
-const { Auth } = require('../Configurations/constants')
+const { Auth } = require('../configurations/constants')
 
 module.exports.getApiKey = (login, password, isLongLifeKey) => {
 	return axios({

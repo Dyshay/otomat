@@ -1,7 +1,7 @@
 const { EventEmitter } = require('events')
-const EventWrapper = require('./EventWrapper')
-const { ucFirst } = require('./Helper')
-const { Servers } = require('../Configurations/constants')
+const EventWrapper = require('./event-wrapper')
+const { ucFirst } = require('./helper')
+const { Servers } = require('../configurations/constants')
 
 module.exports = class Socket {
 	constructor(primus) {
