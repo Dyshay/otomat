@@ -31,6 +31,6 @@ module.exports.generateString = (length = 10) => {
 	return key + this.checksum(key)
 }
 
-module.exports.ucFirst = input => {
-	return input.charAt(0).toUpperCase() + input.slice(1)
-}
+module.exports.ucFirst = input => input.charAt(0).toUpperCase() + input.slice(1)
+
+module.exports.ucLower = input => input.charAt(0).toLowerCase() + input.slice(1)

@@ -1,3 +1,5 @@
+const { ucLower } = require('./helper')
+
 /**
  * @class
  * @classdesc Handle Plugins
@@ -18,8 +20,8 @@ class PluginLoader {
      */
     get _context() {
         const context = {}
-        Object.defineProperty(context, 'socket', { get: () => this._client.Socket })
-        Object.defineProperty(context, 'rootData', { get: () => this._client.Data })
+        Object.defineProperty(context, 'socket', { get: () => this._client.socket })
+        Object.defineProperty(context, 'rootData', { get: () => this._client.data })
         return context
     }
 
@@ -32,28 +34,32 @@ class PluginLoader {
     }
 
     _register(plugin) {
-        const information = plugin.describe()
-        console.log(information)
+        const info = plugin.describe()
+        const name = ucLower(info.name)
+        console.log(info)
 
-        if (this._client.Data[information.name] !== undefined)
+        if (this._client.data[name] !== undefined)
             throw new Error('A plugin with the same name are already loaded.')
 
-        this._client.Data[information.name] = plugin.data()
-        plugin._wrapper = this._client.Socket.createWrapper()
+        this._client.data[name] = plugin.data()
+        plugin._wrapper = this._client.socket.createWrapper()
         return this
     }
 
     _feedApi(plugin) {
-        const information = plugin.describe()
-        this._client.Api[information.name] = {}
+        const info = plugin.describe()
+        const name = ucLower(info.name)
+
+        this._client.api[name] = {}
         for (const methodName in plugin.methods) {
             const method = plugin.methods[methodName]
-            this._client.Api[information.name][methodName] = (...args) => method(this._context, ...args)
+            this._client.api[name][methodName] = (...args) => method(this._context, ...args)
         }
     }
 
     _subscribe(plugin) {
         const info = plugin.describe()
+        const name = ucLower(info.name)
         const wrapper = plugin._wrapper
 
         for (const subscriberName in plugin.subscribers) {
@@ -63,7 +69,7 @@ class PluginLoader {
             const subscriber = plugin.subscribers[subscriberName]
             const eventName = subscriberName.slice(2)
             wrapper.on(eventName, (...args) => {
-                const scope = Object.assign(this._client.Data[info.name], plugin.methods)
+                const scope = Object.assign(this._client.data[name], plugin.methods)
                 subscriber.call(scope, this._context, ...args)
             })
         }
@@ -73,9 +79,11 @@ class PluginLoader {
 
     unregister(plugin) {
         const info = plugin.describe()
+        const name = ucLower(info.name)
+
         plugin._wrapper.unregisterAll()
-        delete this._client.Api[info.name]
-        delete this._client.Data[info.name]
+        delete this._client.api[name]
+        delete this._client.data[name]
         return this
     }
 }

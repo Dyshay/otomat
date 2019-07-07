@@ -5,8 +5,9 @@ const { Servers } = require('../configurations/constants')
 
 module.exports = class Socket {
 	constructor(primus) {
-		this.Primus = primus
-		this.Client = null
+		this.primus = primus
+		this.client = null
+		this.dispatcher = null
 		this._serverType = Socket.ServerTypeEnum.NONE
 	}
 
@@ -32,16 +33,15 @@ module.exports = class Socket {
 			throw new Error('Unable to found the corresponding server.')
 		}
 
-		if (this.Client !== null) {
+		if (this.client !== null) {
 			throw new Error('A connection has already in progress.')
 		}
 		
-		const { Primus } = this
 		const serverAddress = (serverType === Socket.ServerTypeEnum.LOGIN ? Servers.Auth : Servers.Game) + '?STICKER=' + sticker
 		this._serverType = serverType
 		console.log(`Connecting to \`${serverType}\` server`)
 
-        this.Client = new Primus(serverAddress, {
+        this.client = new this.primus(serverAddress, {
             manual: true,
             reconnect: {
                 max: 5000,
@@ -51,7 +51,7 @@ module.exports = class Socket {
             strategy: 'disconnect, timeout'
         })
 		
-        this.Client
+        this.client
 			.on('open', this._OnSocketOpened.bind(this))
 			.on('data', this._OnSocketDataReceived.bind(this))
 			.on('reconnect', this._OnSocketReconnecting.bind(this))
@@ -65,35 +65,35 @@ module.exports = class Socket {
 
 	_OnSocketOpened() {
 		console.log('<Socket> Connection opened.')
-		this.Dispatcher.emit('SocketConnected')
+		this.dispatcher.emit('SocketConnected')
 	}
 
 	_OnSocketDataReceived(packet) {
 		console.log('<Socket> Data received (' + packet._messageType + ')')
-		this.Dispatcher.emit(ucFirst(packet._messageType), packet)
+		this.dispatcher.emit(ucFirst(packet._messageType), packet)
 	}
 
 	_OnSocketReconnecting() {
 		console.log('<Socket> Trying to reconnect')
-		this.Dispatcher.emit('SocketReconnecting')
+		this.dispatcher.emit('SocketReconnecting')
 	}
 
 	_OnSocketError(e) {
 		console.log('<Socket> An error occured')
 		console.log(e)
-		this.Dispatcher.emit('SocketError')
+		this.dispatcher.emit('SocketError')
 	}
 
 	_OnSocketClosed() {
 		console.log('<Socket> Connection closed')
-		this.Dispatcher.emit('SocketClosed')
+		this.dispatcher.emit('SocketClosed')
 	}
 
 	_OnSocketEnded() {
 		console.log('<Socket> Connection ended')
-		this.Client.destroy()
-		this.Client = null
-		this.Dispatcher.emit('SocketEnded')
+		this.client.destroy()
+		this.client = null
+		this.dispatcher.emit('SocketEnded')
 	}
 
 	/**
@@ -103,8 +103,8 @@ module.exports = class Socket {
 	 */
 	disconnect(reason) {
 		this.send('disconnecting', reason)
-		this.Client.destroy()
-		this.Client = null
+		this.client.destroy()
+		this.client = null
 		return this
 	}
 
@@ -115,11 +115,11 @@ module.exports = class Socket {
 	 * @returns {Socket}
 	 */
 	send(call, data) {
-		if (!this.Client) {
+		if (!this.client) {
 			throw new Error('Trying to send data to an unavailable connection.')
 		}
 
-		this.Client.write({ call, data })
+		this.client.write({ call, data })
 		return this
 	}
 
@@ -138,7 +138,7 @@ module.exports = class Socket {
 	 * @returns {EventWrapper}
 	 */
 	createWrapper() {
-		return new EventWrapper(this.Dispatcher)
+		return new EventWrapper(this.dispatcher)
 	}
 
 	/**
@@ -146,7 +146,7 @@ module.exports = class Socket {
 	 * @returns {Socket}
 	 */
 	mount() {
-		this.Dispatcher = new EventEmitter()
+		this.dispatcher = new EventEmitter()
 		return this
 	}
 
@@ -156,11 +156,11 @@ module.exports = class Socket {
 	 * @todo Investigate for an existing reason that we can use
 	 */
 	unmount() {
-		if (this.Client !== null) {
+		if (this.client !== null) {
 			this.disconnect('NO_REASON')
 		}
 
-		this.Dispatcher = null
+		this.dispatcher = null
 		return this
 	}
 }

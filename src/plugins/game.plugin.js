@@ -33,21 +33,21 @@ module.exports = {
         OnSocketConnected(ctx) {
             if (ctx.socket.serverType !== 'Game' || this.serverIp === null) return
             ctx.socket.send('connecting', {
-                'language': ctx.rootData.Client.language,
+                'language': ctx.rootData.client.language,
                 'server': {
                     'address': this.serverIp,
                     'port': this.serverPort,
                     'id': this.serverId
                 },
                 'client': 'android',
-                'appVersion': ctx.rootData.Client.appVersion,
-                'buildVersion': ctx.rootData.Client.buildVersion
+                'appVersion': ctx.rootData.client.appVersion,
+                'buildVersion': ctx.rootData.client.buildVersion
             })
         },
         OnHelloGameMessage(ctx, packet) {
             ctx.socket.sendMessage('AuthenticationTicketMessage', {
                 ticket: this.serverTicket,
-                lang: ctx.rootData.Client.language
+                lang: ctx.rootData.client.language
             })
         },
         OnTrustStatusMessage(ctx, packet) {
@@ -93,7 +93,7 @@ module.exports = {
     },
     methods: {
         connect(ctx) {
-            return ctx.socket.connect('Game', ctx.rootData.Credentials.sticker)
+            return ctx.socket.connect('Game', ctx.rootData.credentials.sticker)
         },
         play(ctx, characterId) {
             return ctx.socket.sendMessage('CharacterSelectionMessage', { id: characterId })

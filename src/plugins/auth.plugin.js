@@ -12,11 +12,11 @@ module.exports = {
         OnSocketConnected(ctx) {
             if (ctx.socket.serverType !== 'Login') return
             ctx.socket.send('connecting', {
-                'language': ctx.rootData.Client.language,
+                'language': ctx.rootData.client.language,
                 'server': 'login',
                 'client': 'android',
-                'appVersion': ctx.rootData.Client.appVersion,
-                'buildVersion': ctx.rootData.Client.buildVersion
+                'appVersion': ctx.rootData.client.appVersion,
+                'buildVersion': ctx.rootData.client.buildVersion
             })
         },
         OnProtocolRequired() {
@@ -30,16 +30,16 @@ module.exports = {
             this.key = key
 
             ctx.socket.send('checkAssetsVersion', {
-                staticDataVersion: ctx.rootData.Client.staticDataVersion,
-                assetsVersion: ctx.rootData.Client.assetsVersion
+                staticDataVersion: ctx.rootData.client.staticDataVersion,
+                assetsVersion: ctx.rootData.client.assetsVersion
             })
         },
         OnAssetsVersionChecked(ctx) {
             ctx.socket.send('login', {
                 key: this.key,
                 salt: this.salt,
-                token: ctx.rootData.Credentials.userToken,
-                username: ctx.rootData.Credentials.userName
+                token: ctx.rootData.credentials.userToken,
+                username: ctx.rootData.credentials.userName
             })
         },
         OnServersListMessage(ctx, { servers }) {
@@ -50,7 +50,7 @@ module.exports = {
         connect(ctx) {
             const wrapper = ctx.socket.createWrapper()
             const servers = wrapper.once('ServersListMessage')
-            ctx.socket.connect('Login', ctx.rootData.Credentials.sticker)
+            ctx.socket.connect('Login', ctx.rootData.credentials.sticker)
             return servers
         },
         play(ctx, serverId) {

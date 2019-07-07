@@ -8,25 +8,25 @@ const TokenManager = require('./libs/token-manager')
 const AuthPlugin = require('./plugins/auth.plugin')
 const GamePlugin = require('./plugins/game.plugin')
 
-const { generateString } = require('./libs/Helper')
+const { generateString } = require('./libs/helper')
 
 module.exports = class Client {
     constructor(clientSettings) {
-        this.Api = {}
-        this.Data = new DataManager(clientSettings)
-        this.Socket = new Socket(clientSettings.primus)
-        this.Plugins = new PluginLoader(this)
+        this.api = {}
+        this.data = new DataManager(clientSettings)
+        this.socket = new Socket(clientSettings.primus)
+        this.plugins = new PluginLoader(this)
     }
 
     registerDefaultPlugins() {
-        this.Plugins.register(AuthPlugin)
-        this.Plugins.register(GamePlugin)
+        this.plugins.register(AuthPlugin)
+        this.plugins.register(GamePlugin)
         return this
     }
 
     unregisterDefaultPlugins() {
-        this.Plugins.unregister(AuthPlugin)
-        this.Plugins.unregister(GamePlugin)
+        this.plugins.unregister(AuthPlugin)
+        this.plugins.unregister(GamePlugin)
         return this
     }
 
@@ -34,16 +34,16 @@ module.exports = class Client {
         const { data: { key } } = await TokenManager.getApiKey(login, password, true)
         const { data: { token } } = await TokenManager.getToken(key)
         const sticker = generateString(15)
-        this.Data.Credentials = { sticker, userToken: token, userName: login }
+        this.data.credentials = { sticker, userToken: token, userName: login }
     }
 
     mount() {
-        this.Socket.mount()
+        this.socket.mount()
         return this
     }
 
     unmount() {
-        this.Socket.unmount()
+        this.socket.unmount()
         return this
     }
 }
