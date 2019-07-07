@@ -5,7 +5,6 @@ const { Servers } = require('../configurations/constants')
 
 const { Signale } = require('signale')
 const signale = new Signale({
-  scope: 'socket',
   types: {
     packet: {
       badge: '📦',
@@ -88,7 +87,7 @@ module.exports = class Socket {
   }
 
   _OnSocketDataReceived(packet) {
-    signale.packet(`-> ${packet._messageType}`)
+    signale.packet(`RCV ${packet._messageType}`)
     this.dispatcher.emit(ucFirst(packet._messageType), packet)
   }
 
@@ -138,6 +137,7 @@ module.exports = class Socket {
       throw new Error('Trying to send data to an unavailable connection.')
     }
 
+    signale.packet('SNT ' + ((data && data.type) ? data.type : call))
     this.client.write({ call, data })
     return this
   }
