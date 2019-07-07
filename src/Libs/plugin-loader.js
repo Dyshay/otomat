@@ -72,6 +72,10 @@ class PluginLoader {
     }
 
     unregister(plugin) {
+        const info = plugin.describe()
+        plugin._wrapper.unregisterAll()
+        delete this._client.Api[info.name]
+        delete this._client.Data[info.name]
         return this
     }
 }
