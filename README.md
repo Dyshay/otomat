@@ -28,10 +28,11 @@ async function run(login, password, serverId, characterId) {
     const player = new Client(clientSettings)
     player.mount()
     player.registerDefaultPlugins()
+    
     await player.authenticate(login, password)
     await player.api.auth.connect()
     await player.api.auth.play(serverId)
-    await player.api.auth.play(characterId)
+    await player.api.game.play(characterId)
 }
 
 const [ login, password, serverId, characterId ] = process.argv.slice(2, 6)
