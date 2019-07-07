@@ -1,3 +1,5 @@
+![DofusRemote Client](https://image.noelshack.com/fichiers/2019/27/7/1562494550-capture-d-ecran-2019-07-07-a-12-14-36.png)
+
 ## About
 **@dofus-remote/client** has been developed for developers and can't do more than:
 - Maintain a connection to the servers.
