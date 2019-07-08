@@ -33,7 +33,7 @@ class PluginLoader {
     return this
   }
 
-  _register(plugin, signale) {
+  _register(plugin) {
     const info = plugin.describe()
     const name = ucLower(info.name)
 
@@ -46,7 +46,7 @@ class PluginLoader {
     return this
   }
 
-  _feedApi(plugin, signale) {
+  _feedApi(plugin) {
     const info = plugin.describe()
     const name = ucLower(info.name)
 
@@ -58,7 +58,7 @@ class PluginLoader {
     }
   }
 
-  _subscribe(plugin, signale) {
+  _subscribe(plugin) {
     const info = plugin.describe()
     const name = ucLower(info.name)
     const wrapper = plugin._wrapper

@@ -11,7 +11,9 @@ module.exports = {
     serverIp: null,
     serverPort: null,
     serverTicket: null,
-    sequenceNumberRequestMessageValue: 0
+    sequenceNumberRequestMessageValue: 0,
+    characters: [],
+    hasStartupActions: false
   }),
   subscribers: {
     OnIdentificationSuccessMessage(ctx, { login }) {
@@ -50,6 +52,10 @@ module.exports = {
     },
     OnTrustStatusMessage(ctx, packet) {
       ctx.socket.sendMessage('CharactersListRequestMessage')
+    },
+    OnCharactersListMessage(ctx, packet) {
+      this.characters = packet.characters
+      this.hasStartupActions = packet.hasStartupActions
     },
     OnCharacterSelectedForceMessage(ctx, packet) {
       ctx.socket.sendMessage('CharacterSelectedForceReadyMessage')
@@ -91,12 +97,16 @@ module.exports = {
   },
   methods: {
     connect(ctx) {
-      return ctx.socket.connect('Game', ctx.rootData.credentials.sticker)
+      const wrapper = ctx.socket.createWrapper()
+      const characters = wrapper.once('CharactersListMessage')
+      ctx.socket.connect('Game', ctx.rootData.credentials.sticker)
+      return characters
     },
     play(ctx, characterId) {
-      return ctx.socket.sendMessage('CharacterSelectionMessage', {
-        id: characterId
-      })
+      const wrapper = ctx.socket.createWrapper()
+      const validation = wrapper.once('CharacterSelectedSuccessMessage')
+      ctx.socket.sendMessage('CharacterSelectionMessage', { id: characterId })
+      return validation
     }
   },
   mounted() {},
