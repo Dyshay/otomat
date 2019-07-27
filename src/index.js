@@ -1,4 +1,3 @@
-const DataManager = require('./libs/data')
 const Socket = require('./libs/socket')
 const PluginLoader = require('./libs/plugin-loader')
 const TokenManager = require('./libs/token-manager')
@@ -12,8 +11,8 @@ const { generateString } = require('./libs/helper')
 module.exports = class Client {
   constructor(clientSettings) {
     this.api = {}
-    this.data = new DataManager(clientSettings)
-    this.socket = new Socket(clientSettings.primus)
+    this.data = { client: clientSettings }
+    this.socket = new Socket(this.data.client.primus)
     this.plugins = new PluginLoader(this)
   }
 
