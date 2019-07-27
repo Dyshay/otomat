@@ -28,11 +28,9 @@ class PluginLoader {
   _getScope(plugin) {
     const info = plugin.describe()
     const name = ucLower(info.name)
-    const scope = Object.assign(
-      this._client.data[name],
-      plugin.methods,
-      { _wrapper: plugin._wrapper }
-    )
+    const scope = Object.assign(this._client.data[name], plugin.methods, {
+      _wrapper: plugin._wrapper
+    })
     return scope
   }
 

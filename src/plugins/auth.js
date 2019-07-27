@@ -19,10 +19,8 @@ module.exports = {
         buildVersion: ctx.rootData.client.buildVersion
       })
     },
-    ProtocolRequired() {
-    },
-    ConnectionFailedMessage() {
-    },
+    ProtocolRequired() {},
+    ConnectionFailedMessage() {},
     HelloConnectMessage(ctx, { salt, key }) {
       this.salt = salt
       this.key = key

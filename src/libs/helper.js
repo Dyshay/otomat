@@ -42,14 +42,14 @@ module.exports.ucLower = input => input.charAt(0).toLowerCase() + input.slice(1)
 const { request } = require('https')
 module.exports.getJson = (url, options = {}) => {
   return new Promise((resolve, reject) => {
-      const req = request(url, options, res => {
-          let data = ''
-          res.on('data', chunk => data += chunk)
-          res.on('end', () => resolve(JSON.parse(data)))
-      })
+    const req = request(url, options, res => {
+      let data = ''
+      res.on('data', chunk => (data += chunk))
+      res.on('end', () => resolve(JSON.parse(data)))
+    })
 
-      req.on('error', err => reject(err))
-      req.write(options.data || '')
-      req.end()
+    req.on('error', err => reject(err))
+    req.write(options.data || '')
+    req.end()
   })
 }

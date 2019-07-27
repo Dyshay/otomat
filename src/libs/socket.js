@@ -137,7 +137,7 @@ module.exports = class Socket {
       throw new Error('Trying to send data to an unavailable connection.')
     }
 
-    signale.packet('SNT ' + ((data && data.type) ? data.type : call))
+    signale.packet('SNT ' + (data && data.type ? data.type : call))
     this.client.write({ call, data })
     return this
   }
