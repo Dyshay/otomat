@@ -97,14 +97,12 @@ module.exports = {
   },
   methods: {
     connect(ctx) {
-      const wrapper = ctx.socket.createWrapper()
-      const characters = wrapper.once('CharactersListMessage')
+      const characters = this._wrapper.once('CharactersListMessage')
       ctx.socket.connect('Game', ctx.rootData.credentials.sticker)
       return characters
     },
     play(ctx, characterId) {
-      const wrapper = ctx.socket.createWrapper()
-      const validation = wrapper.once('CharacterSelectedSuccessMessage')
+      const validation = this._wrapper.once('CharacterSelectedSuccessMessage')
       ctx.socket.sendMessage('CharacterSelectionMessage', { id: characterId })
       return validation
     }
