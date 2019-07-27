@@ -1,26 +1,17 @@
-const axios = require('axios')
 const { Auth } = require('../configurations/constants')
+const { getJson } = require('./helper')
 
 module.exports.getApiKey = (login, password, isLongLifeKey) => {
-  return axios({
-    url: Auth.CreateApiKey,
+  return getJson(Auth.CreateApiKey, {
     method: 'POST',
-    responseType: 'json',
-    data: new URLSearchParams([
+    data: String(new URLSearchParams([
       ['login', login],
       ['password', password],
       ['long_life_key', isLongLifeKey]
-    ])
+    ]))
   })
 }
 
 module.exports.getToken = key => {
-  return axios({
-    url: Auth.CreateToken,
-    method: 'GET',
-    responseType: 'json',
-    headers: {
-      apiKey: key
-    }
-  })
+  return getJson(Auth.CreateToken, { headers: { apiKey: key } })
 }

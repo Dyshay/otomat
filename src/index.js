@@ -33,9 +33,9 @@ module.exports = class Client {
   async authenticate(login, password) {
     const logger = new signale.Signale({ interactive: true })
     logger.await('[1/3] - Retrieving API key')
-    const { data: { key } } = await TokenManager.getApiKey(login, password, true)
+    const { key } = await TokenManager.getApiKey(login, password, true)
     logger.await('[2/3] - Retrieving account token')
-    const { data: { token } } = await TokenManager.getToken(key)
+    const { token } = await TokenManager.getToken(key)
     const sticker = generateString(15)
     this.data.credentials = { sticker, userToken: token, userName: login }
     logger.success('[3/3] - Authenticated')
