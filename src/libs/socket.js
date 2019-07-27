@@ -1,7 +1,7 @@
 const { EventEmitter } = require('events')
 const EventWrapper = require('./event-wrapper')
 const { ucFirst } = require('./helper')
-const { Servers } = require('../configurations/constants')
+const { Servers } = require('../constants')
 
 const { Signale } = require('signale')
 const signale = new Signale({

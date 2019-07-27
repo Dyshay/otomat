@@ -1,4 +1,4 @@
-const { Auth } = require('../configurations/constants')
+const { Auth } = require('../constants')
 const { getJson } = require('./helper')
 
 module.exports.getApiKey = (login, password, isLongLifeKey) => {
