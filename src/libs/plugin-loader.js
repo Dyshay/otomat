@@ -60,21 +60,21 @@ class PluginLoader {
   _feedApi(plugin) {
     const info = plugin.describe()
     const name = ucLower(info.name)
+    const scope = this._getScope(plugin)
 
     this._client.api[name] = {}
     for (const methodName in plugin.methods) {
       const method = plugin.methods[methodName]
-      const scope = this._getScope(plugin)
       this._client.api[name][methodName] = (...args) =>
         method.call(scope, this._context, ...args)
     }
   }
 
   _subscribe(plugin) {
+    const scope = this._getScope(plugin)
     for (const subscriberName in plugin.subscribers) {
       const subscriber = plugin.subscribers[subscriberName]
       plugin._wrapper.on(subscriberName, (...args) => {
-        const scope = this._getScope(plugin)
         subscriber.call(scope, this._context, ...args)
       })
     }
