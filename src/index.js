@@ -2,8 +2,8 @@ const Socket = require('./libs/socket')
 const PluginLoader = require('./libs/plugin-loader')
 const TokenManager = require('./libs/token-manager')
 
-const AuthPlugin = require('./plugins/auth.plugin')
-const GamePlugin = require('./plugins/game.plugin')
+const AuthPlugin = require('./plugins/auth')
+const GamePlugin = require('./plugins/game')
 
 const signale = require('signale')
 const { generateString } = require('./libs/helper')
