@@ -108,5 +108,7 @@ module.exports = {
     }
   },
   mounted() {},
-  unmounted() {}
+  unmounted() {
+    clearInterval(this.antiInactivityInterval)
+  }
 }

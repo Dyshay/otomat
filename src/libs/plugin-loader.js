@@ -38,6 +38,9 @@ class PluginLoader {
     this._register(plugin)
     this._subscribe(plugin)
     this._feedApi(plugin)
+    if (plugin.mount) {
+      plugin.mount.call(this._getScope(plugin), this._context)
+    }
     this._plugins.push(plugin)
     return this
   }
@@ -85,6 +88,9 @@ class PluginLoader {
     const name = ucLower(info.name)
 
     plugin._wrapper.unregisterAll()
+    if (plugin.unmount) {
+      plugin.unmount.call(this._getScope(plugin), this._context)
+    }
     delete this._client.api[name]
     delete this._client.data[name]
     return this
