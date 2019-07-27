@@ -9,7 +9,7 @@ module.exports = {
     servers: []
   }),
   subscribers: {
-    OnSocketConnected(ctx) {
+    SocketConnected(ctx) {
       if (ctx.socket.serverType !== 'Login') return
       ctx.socket.send('connecting', {
         language: ctx.rootData.client.language,
@@ -19,11 +19,11 @@ module.exports = {
         buildVersion: ctx.rootData.client.buildVersion
       })
     },
-    OnProtocolRequired() {
+    ProtocolRequired() {
     },
-    OnConnectionFailedMessage() {
+    ConnectionFailedMessage() {
     },
-    OnHelloConnectMessage(ctx, { salt, key }) {
+    HelloConnectMessage(ctx, { salt, key }) {
       this.salt = salt
       this.key = key
 
@@ -32,7 +32,7 @@ module.exports = {
         assetsVersion: ctx.rootData.client.assetsVersion
       })
     },
-    OnAssetsVersionChecked(ctx) {
+    AssetsVersionChecked(ctx) {
       ctx.socket.send('login', {
         key: this.key,
         salt: this.salt,
@@ -40,7 +40,7 @@ module.exports = {
         username: ctx.rootData.credentials.userName
       })
     },
-    OnServersListMessage(ctx, { servers }) {
+    ServersListMessage(ctx, { servers }) {
       this.servers = servers
     }
   },

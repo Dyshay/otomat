@@ -64,13 +64,8 @@ class PluginLoader {
     const wrapper = plugin._wrapper
 
     for (const subscriberName in plugin.subscribers) {
-      if (!/^On/.test(subscriberName)) {
-        throw new Error(`Invalid subscriber name <${subscriberName}>`)
-      } 
-
       const subscriber = plugin.subscribers[subscriberName]
-      const eventName = subscriberName.slice(2)
-      wrapper.on(eventName, (...args) => {
+      wrapper.on(subscriberName, (...args) => {
         const scope = Object.assign(this._client.data[name], plugin.methods)
         subscriber.call(scope, this._context, ...args)
       })

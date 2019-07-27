@@ -16,21 +16,21 @@ module.exports = {
     hasStartupActions: false
   }),
   subscribers: {
-    OnIdentificationSuccessMessage(ctx, { login }) {
+    IdentificationSuccessMessage(ctx, { login }) {
       this.sessionId = login
     },
-    OnSelectedServerDataMessage(ctx, { serverId, address, port, ticket }) {
+    SelectedServerDataMessage(ctx, { serverId, address, port, ticket }) {
       this.serverId = serverId
       this.serverIp = address
       this.serverPort = port
       this.serverTicket = ticket
     },
-    OnSelectedServerRefusedMessage(ctx, { serverId, error, serverStatus }) {},
-    OnSocketEnded(ctx) {
+    SelectedServerRefusedMessage(ctx, { serverId, error, serverStatus }) {},
+    SocketEnded(ctx) {
       if (ctx.socket.serverType !== 'Login') return
       this.connect(ctx)
     },
-    OnSocketConnected(ctx) {
+    SocketConnected(ctx) {
       if (ctx.socket.serverType !== 'Game' || this.serverIp === null) return
       ctx.socket.send('connecting', {
         language: ctx.rootData.client.language,
@@ -44,23 +44,23 @@ module.exports = {
         buildVersion: ctx.rootData.client.buildVersion
       })
     },
-    OnHelloGameMessage(ctx, packet) {
+    HelloGameMessage(ctx, packet) {
       ctx.socket.sendMessage('AuthenticationTicketMessage', {
         ticket: this.serverTicket,
         lang: ctx.rootData.client.language
       })
     },
-    OnTrustStatusMessage(ctx, packet) {
+    TrustStatusMessage(ctx, packet) {
       ctx.socket.sendMessage('CharactersListRequestMessage')
     },
-    OnCharactersListMessage(ctx, packet) {
+    CharactersListMessage(ctx, packet) {
       this.characters = packet.characters
       this.hasStartupActions = packet.hasStartupActions
     },
-    OnCharacterSelectedForceMessage(ctx, packet) {
+    CharacterSelectedForceMessage(ctx, packet) {
       ctx.socket.sendMessage('CharacterSelectedForceReadyMessage')
     },
-    OnCharacterSelectedSuccessMessage(ctx, packet) {
+    CharacterSelectedSuccessMessage(ctx, packet) {
       ctx.socket.send('moneyGoultinesAmountRequest')
       ctx.socket.sendMessage('QuestListRequestMessage')
       ctx.socket.sendMessage('FriendsGetListMessage')
@@ -79,15 +79,15 @@ module.exports = {
         ctx.socket.sendMessage('BasicPingMessage', { quit: false })
       }, 600000)
     },
-    OnSequenceNumberRequestMessage(ctx, packet) {
+    SequenceNumberRequestMessage(ctx, packet) {
       ctx.socket.sendMessage('SequenceNumberMessage', {
         number: ++this.sequenceNumberRequestMessageValue
       })
     },
-    OnGameContextCreateMessage(ctx, packet) {
+    GameContextCreateMessage(ctx, packet) {
       ctx.socket.sendMessage('ObjectAveragePricesGetMessage')
     },
-    OnBasicLatencyStatsRequestMessage(ctx, packet) {
+    BasicLatencyStatsRequestMessage(ctx, packet) {
       ctx.socket.sendMessage('BasicLatencyStatsMessage', {
         latency: 262,
         max: 50,
