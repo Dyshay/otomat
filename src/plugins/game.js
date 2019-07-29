@@ -76,7 +76,7 @@ module.exports = {
       ctx.socket.send('restoreMysteryBox')
       ctx.socket.sendMessage('GameContextCreateRequestMessage')
       this.antiInactivityInterval = setInterval(() => {
-        ctx.socket.sendMessage('BasicPingMessage', { quit: false })
+        ctx.socket.sendMessage('BasicPingMessage', { quiet: false })
       }, 600000)
     },
     SequenceNumberRequestMessage(ctx, packet) {
