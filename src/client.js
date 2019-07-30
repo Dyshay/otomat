@@ -11,16 +11,6 @@ module.exports = class Client {
     this.socket = new Socket(this.data._client.primus)
   }
 
-  registerDefaultPlugins() {
-    signale.info('Registering default plugins')
-    return this
-  }
-
-  unregisterDefaultPlugins() {
-    signale.info('Unregistering default plugins')
-    return this
-  }
-
   async authenticate(login, password) {
     const logger = new signale.Signale({ interactive: true })
     logger.await('[1/3] - Retrieving API key')
