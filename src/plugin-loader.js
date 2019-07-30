@@ -1,7 +1,6 @@
+const { ucLower } = require('./libs/helper')
 const AuthPlugin = require('./plugins/auth')
 const GamePlugin = require('./plugins/game')
-
-const { ucLower } = require('./libs/helper')
 
 module.exports = class PluginLoader {
   constructor() {

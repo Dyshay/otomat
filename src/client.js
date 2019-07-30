@@ -1,13 +1,12 @@
 const Socket = require('./libs/socket')
 const TokenManager = require('./libs/token-manager')
 const { generateString } = require('./libs/helper')
-
 const signale = require('signale')
 
 module.exports = class Client {
-  constructor(clientSettings) {
+  constructor(settings) {
     this.api = {}
-    this.data = { _client: clientSettings }
+    this.data = { _client: settings }
     this.socket = new Socket(this.data._client.primus)
   }
 
