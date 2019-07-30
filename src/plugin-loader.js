@@ -1,9 +1,18 @@
+const AuthPlugin = require('./plugins/auth')
+const GamePlugin = require('./plugins/game')
+
 const { ucLower } = require('./libs/helper')
 
 module.exports = class PluginLoader {
   constructor() {
     this._plugins = new Map()
     this._clients = []
+  }
+
+  registerDefaults() {
+    return this
+      .add(AuthPlugin)
+      .add(GamePlugin)
   }
 
   add(plugin) {
