@@ -7,8 +7,8 @@ const signale = require('signale')
 module.exports = class Client {
   constructor(clientSettings) {
     this.api = {}
-    this.data = { client: clientSettings }
-    this.socket = new Socket(this.data.client.primus)
+    this.data = { _client: clientSettings }
+    this.socket = new Socket(this.data._client.primus)
   }
 
   registerDefaultPlugins() {
@@ -28,7 +28,7 @@ module.exports = class Client {
     logger.await('[2/3] - Retrieving account token')
     const { token } = await TokenManager.getToken(key)
     const sticker = generateString(15)
-    this.data.credentials = { sticker, userToken: token, userName: login }
+    this.data._credentials = { sticker, userToken: token, userName: login }
     logger.success('[3/3] - Authenticated')
   }
 

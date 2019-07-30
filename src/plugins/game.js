@@ -33,21 +33,21 @@ module.exports = {
     SocketConnected(ctx) {
       if (ctx.socket.serverType !== 'Game' || this.serverIp === null) return
       ctx.socket.send('connecting', {
-        language: ctx.rootData.client.language,
+        language: ctx.rootData._client.language,
         server: {
           address: this.serverIp,
           port: this.serverPort,
           id: this.serverId
         },
         client: 'android',
-        appVersion: ctx.rootData.client.appVersion,
-        buildVersion: ctx.rootData.client.buildVersion
+        appVersion: ctx.rootData._client.appVersion,
+        buildVersion: ctx.rootData._client.buildVersion
       })
     },
     HelloGameMessage(ctx, packet) {
       ctx.socket.sendMessage('AuthenticationTicketMessage', {
         ticket: this.serverTicket,
-        lang: ctx.rootData.client.language
+        lang: ctx.rootData._client.language
       })
     },
     TrustStatusMessage(ctx, packet) {
@@ -98,7 +98,7 @@ module.exports = {
   methods: {
     connect(ctx) {
       const characters = this._wrapper.once('CharactersListMessage')
-      ctx.socket.connect('Game', ctx.rootData.credentials.sticker)
+      ctx.socket.connect('Game', ctx.rootData._credentials.sticker)
       return characters
     },
     play(ctx, characterId) {

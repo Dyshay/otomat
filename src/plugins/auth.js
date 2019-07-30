@@ -12,11 +12,11 @@ module.exports = {
     SocketConnected(ctx) {
       if (ctx.socket.serverType !== 'Login') return
       ctx.socket.send('connecting', {
-        language: ctx.rootData.client.language,
+        language: ctx.rootData._client.language,
         server: 'login',
         client: 'android',
-        appVersion: ctx.rootData.client.appVersion,
-        buildVersion: ctx.rootData.client.buildVersion
+        appVersion: ctx.rootData._client.appVersion,
+        buildVersion: ctx.rootData._client.buildVersion
       })
     },
     ProtocolRequired() {},
@@ -26,16 +26,16 @@ module.exports = {
       this.key = key
 
       ctx.socket.send('checkAssetsVersion', {
-        staticDataVersion: ctx.rootData.client.staticDataVersion,
-        assetsVersion: ctx.rootData.client.assetsVersion
+        staticDataVersion: ctx.rootData._client.staticDataVersion,
+        assetsVersion: ctx.rootData._client.assetsVersion
       })
     },
     AssetsVersionChecked(ctx) {
       ctx.socket.send('login', {
         key: this.key,
         salt: this.salt,
-        token: ctx.rootData.credentials.userToken,
-        username: ctx.rootData.credentials.userName
+        token: ctx.rootData._credentials.userToken,
+        username: ctx.rootData._credentials.userName
       })
     },
     ServersListMessage(ctx, { servers }) {
@@ -45,7 +45,7 @@ module.exports = {
   methods: {
     connect(ctx) {
       const servers = this._wrapper.once('ServersListMessage')
-      ctx.socket.connect('Login', ctx.rootData.credentials.sticker)
+      ctx.socket.connect('Login', ctx.rootData._credentials.sticker)
       return servers
     },
     play(ctx, serverId) {
