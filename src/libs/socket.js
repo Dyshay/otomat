@@ -1,8 +1,9 @@
+const AuthServer = 'https://proxyconnection.touch.dofus.com'
+const GameServer = 'https://oshimogameproxy.touch.dofus.com'
+
 const { EventEmitter } = require('events')
 const EventWrapper = require('./event-wrapper')
 const { ucFirst } = require('./helper')
-const { Servers } = require('../constants')
-
 const { Signale } = require('signale')
 const signale = new Signale({
   types: {
@@ -53,8 +54,8 @@ module.exports = class Socket {
 
     const serverAddress =
       (serverType === Socket.ServerTypeEnum.LOGIN
-        ? Servers.Auth
-        : Servers.Game) +
+        ? AuthServer
+        : GameServer) +
       '?STICKER=' +
       sticker
     this._serverType = serverType

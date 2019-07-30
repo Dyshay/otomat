@@ -1,8 +1,9 @@
-const { Auth } = require('../constants')
+const CreateApiKey = 'https://haapi.ankama.com/json/Ankama/v2/Api/CreateApiKey'
+const CreateToken = 'https://haapi.ankama.com/json/Ankama/v2/Account/CreateToken?game=18'
 const { getJson } = require('./helper')
 
 module.exports.getApiKey = (login, password, isLongLifeKey) => {
-  return getJson(Auth.CreateApiKey, {
+  return getJson(CreateApiKey, {
     method: 'POST',
     data: String(
       new URLSearchParams([
@@ -15,5 +16,5 @@ module.exports.getApiKey = (login, password, isLongLifeKey) => {
 }
 
 module.exports.getToken = key => {
-  return getJson(Auth.CreateToken, { headers: { apiKey: key } })
+  return getJson(CreateToken, { headers: { apiKey: key } })
 }
