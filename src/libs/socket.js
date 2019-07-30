@@ -53,9 +53,7 @@ module.exports = class Socket {
     }
 
     const serverAddress =
-      (serverType === Socket.ServerTypeEnum.LOGIN
-        ? AuthServer
-        : GameServer) +
+      (serverType === Socket.ServerTypeEnum.LOGIN ? AuthServer : GameServer) +
       '?STICKER=' +
       sticker
     this._serverType = serverType
