@@ -14,31 +14,35 @@
  * - You must set the versions yourself.
  * - You must import the patched Primus yourself.
  */
-const Client = require('@dofus-remote/client')
+const { Client, Settings, PluginLoader } = require('@dofus-remote/client')
+const Versions = require('@dofus-remote/versions')
 
-const clientSettings = new Client.Settings()
-clientSettings.language = 'en'
-clientSettings.appVersion = null
-clientSettings.buildVersion = null
-clientSettings.staticDataVersion = null
-clientSettings.assetsVersion = null
-clientSettings.primus = require('./primus')
+;(async () => {
+  // 1. Versions
+  const versions = await Versions.getVersions()
+  const settings = new Settings()
+  settings.language = 'fr'
+  settings.appVersion = versions.appVersion
+  settings.buildVersion = versions.buildVersion
+  settings.staticDataVersion = versions.staticDataVersion
+  settings.assetsVersion = versions.assetsVersion
+  settings.primus = require('./primus')
 
-async function run(login, password, serverId, characterId) {
-    const player = new Client(clientSettings)
-    player.mount()
-    player.registerDefaultPlugins()
-    
-    await player.authenticate(login, password)
-    await player.api.auth.connect()
-    await player.api.auth.play(serverId)
-    await player.api.game.play(characterId)
-}
+  // 2. Clients
+  const client = new Client(settings)
+  await client.authenticate(`LOGIN`, `PASSWORD`)
 
-const [ login, password, serverId, characterId ] = process.argv.slice(2, 6)
-run(login, password, serverId, characterId)
-    .then(() => console.log('Why are you runnin\''))
-    .catch(console.error)
+  // 3. Plugins
+  const plugins = new PluginLoader()
+  plugins.registerDefaults()
+  plugins.attach(client)
+  plugins.refreshClients()
+
+  // 4. API Calls
+  await client.api.auth.connect()
+  await client.api.auth.play(-1)
+  await client.api.game.play(-1)
+})().catch(console.error)
 ```
 
 ## Contact
