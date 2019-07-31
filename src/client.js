@@ -20,16 +20,4 @@ module.exports = class Client {
     this.data._credentials = { sticker, userToken: token, userName: login }
     logger.success('[3/3] - Authenticated')
   }
-
-  mount() {
-    signale.info('Mouting client')
-    this.socket.mount()
-    return this
-  }
-
-  unmount() {
-    signale.info('Unmounting client')
-    this.socket.unmount()
-    return this
-  }
 }

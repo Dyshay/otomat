@@ -20,7 +20,7 @@ module.exports = class Socket {
   constructor(primus) {
     this.primus = primus
     this.client = null
-    this.dispatcher = null
+    this.dispatcher = new EventEmitter()
     this._serverType = Socket.ServerTypeEnum.NONE
   }
 
@@ -117,8 +117,9 @@ module.exports = class Socket {
    * Log out from the game server
    * @param {string} reason Reason to log-out the user
    * @returns {Socket}
+   * @todo Investigate for an existing reason that we can use
    */
-  disconnect(reason) {
+  disconnect(reason = 'NO_REASON') {
     this.send('disconnecting', reason)
     this.client.destroy()
     this.client = null
@@ -157,28 +158,5 @@ module.exports = class Socket {
    */
   createWrapper() {
     return new EventWrapper(this.dispatcher)
-  }
-
-  /**
-   * Mounting
-   * @returns {Socket}
-   */
-  mount() {
-    this.dispatcher = new EventEmitter()
-    return this
-  }
-
-  /**
-   * Unmouting
-   * @returns {Socket}
-   * @todo Investigate for an existing reason that we can use
-   */
-  unmount() {
-    if (this.client !== null) {
-      this.disconnect('NO_REASON')
-    }
-
-    this.dispatcher = null
-    return this
   }
 }
