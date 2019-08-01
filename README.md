@@ -14,7 +14,7 @@
  * - You must set the versions yourself.
  * - You must import the patched Primus yourself.
  */
-const { Client, Settings, PluginLoader } = require('@dofus-remote/client')
+const { Client, Settings, Credentials, PluginLoader } = require('@dofus-remote/client')
 const Versions = require('@dofus-remote/versions')
 
 ;(async () => {
@@ -29,8 +29,8 @@ const Versions = require('@dofus-remote/versions')
   settings.primus = require('./primus')
 
   // 2. Clients
-  const client = new Client(settings)
-  await client.authenticate(`LOGIN`, `PASSWORD`)
+  const client = new Client({ client: settings, credentials: new Credentials('login', 'password') })
+  await client.authenticate()
 
   // 3. Plugins
   const plugins = new PluginLoader()
