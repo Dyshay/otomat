@@ -34,8 +34,8 @@ module.exports = {
       ctx.socket.send('login', {
         key: this.key,
         salt: this.salt,
-        token: ctx.rootData._credentials.userToken,
-        username: ctx.rootData._credentials.userName
+        token: ctx.rootData._credentials.token,
+        username: ctx.rootData._credentials.login
       })
     },
     ServersListMessage(ctx, { servers }) {

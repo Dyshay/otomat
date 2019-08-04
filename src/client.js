@@ -19,7 +19,7 @@ module.exports = class Client {
     const { token } = await TokenManager.getToken(key)
     const sticker = generateString(15)
     this.data._credentials.sticker = sticker
-    this.data._credentials.userToken = token
+    this.data._credentials.token = token
     logger.success('[3/3] - Authenticated')
   }
 }

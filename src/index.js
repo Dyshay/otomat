@@ -17,6 +17,6 @@ module.exports.Credentials = class Credentials {
     this.login = login
     this.password = password
     this.sticker = null
-    this.userToken = null
+    this.token = null
   }
 }
