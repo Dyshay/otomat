@@ -44,14 +44,12 @@ module.exports = {
   },
   methods: {
     connect(ctx) {
-      const servers = this._wrapper.once('ServersListMessage')
       ctx.socket.connect('Login', ctx.rootData._credentials.sticker)
-      return servers
+      return this._wrapper.once('ServersListMessage')
     },
     play(ctx, serverId) {
-      const characters = this._wrapper.once('CharactersListMessage')
       ctx.socket.sendMessage('ServerSelectionMessage', { serverId })
-      return characters
+      return this._wrapper.once('CharactersListMessage')
     }
   },
   mounted() {},
