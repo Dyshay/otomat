@@ -1,16 +1,16 @@
-const CreateApiKey = 'https://haapi.ankama.com/json/Ankama/v2/Api/CreateApiKey'
+const CreateApiKey = 'https://haapi.ankama.com/json/Ankama/v2/Api/CreateApiKey?why_use=cloudscraper'
 const CreateToken =
   'https://haapi.ankama.com/json/Ankama/v2/Account/CreateToken?game=18'
 const { getJson } = require('./helper')
 
-module.exports.getApiKey = (login, password, isLongLifeKey) => {
+module.exports.getApiKey = (login, password, isLongLifeToken) => {
   return getJson(CreateApiKey, {
     method: 'POST',
     data: String(
       new URLSearchParams([
         ['login', login],
         ['password', password],
-        ['long_life_key', isLongLifeKey]
+        ['long_life_token', isLongLifeToken]
       ])
     )
   })
