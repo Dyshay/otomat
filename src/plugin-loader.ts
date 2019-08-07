@@ -1,18 +1,18 @@
-const { ucLower } = require('./libs/helper')
+import { ucLower } from './libs/helper'
 
-module.exports = class PluginLoader {
-  constructor() {
-    this._plugins = new Map()
-    this._clients = []
-  }
+export default class PluginLoader {
+  private _plugins: Map<string, any> = new Map()
+  private _clients: any[] = []
 
-  registerDefaults() {
+  public registerDefaults(): this
+  {
     return this
       .add(require('./plugins/auth'))
       .add(require('./plugins/game'))
   }
 
-  add(plugin) {
+  public add(plugin: any): this
+  {
     const { name } = plugin.describe()
     if (this._plugins.has(name)) {
       throw new Error('A plugin with the same name are already registered.')
@@ -22,17 +22,19 @@ module.exports = class PluginLoader {
     return this
   }
 
-  remove(plugin) {
+  public remove(plugin: any): this
+  {
     const { name } = plugin.describe()
     if (!this._plugins.has(name)) {
-      throw new Errror('Unable to find a registered plugin with this name.')
+      throw new Error('Unable to find a registered plugin with this name.')
     }
 
     this._plugins.delete(name)
     return this
   }
 
-  attach(client) {
+  public attach(client: any): this
+  {
     if ('_pluginLoader' in client.data) {
       throw new Error('Attempting to attach an already attached client.')
     }
@@ -42,7 +44,8 @@ module.exports = class PluginLoader {
     return this
   }
 
-  refreshClients() {
+  public refreshClients(): this
+  {
     for (const client of this._clients) {
       for (const [ name, plugin ] of this._plugins) {
         this._fillData(client, plugin)
@@ -59,14 +62,16 @@ module.exports = class PluginLoader {
     return this
   }
 
-  _getContext(client) {
+  _getContext(client: any): any
+  {
     const context = {}
     Object.defineProperty(context, 'socket', { get: () => client.socket })
     Object.defineProperty(context, 'rootData', { get: () => client.data })
     return context
   }
 
-  _getScope(client, plugin) {
+  _getScope(client: any, plugin: any): any
+  {
     const info = plugin.describe()
     const name = ucLower(info.name)
     const _wrapper = client.data._pluginLoader.wrappers[name]
@@ -74,7 +79,8 @@ module.exports = class PluginLoader {
     return scope
   }
 
-  _fillData(client, plugin) {
+  _fillData(client: any, plugin: any): this
+  {
     const info = plugin.describe()
     const name = ucLower(info.name)
     if (name in client.data) return this
@@ -84,7 +90,8 @@ module.exports = class PluginLoader {
     return this
   }
 
-  _fillApi(client, plugin) {
+  _fillApi(client: any, plugin: any): this
+  {
     const info = plugin.describe()
     const name = ucLower(info.name)
     if (name in client.api) return this
@@ -98,9 +105,12 @@ module.exports = class PluginLoader {
       client.api[name][methodName] = (...args) =>
         method.call(scope, context, ...args)
     }
+
+    return this
   }
 
-  _subscribeEvents(client, plugin) {
+  _subscribeEvents(client: any, plugin: any): this
+  {
     const scope = this._getScope(client, plugin)
     const context = this._getContext(client)
     const pluginName = ucLower(plugin.describe().name)
@@ -121,7 +131,8 @@ module.exports = class PluginLoader {
    * 1. Unloading plugins during the run-time
    * 2. Check for cross plugins dependencies while unloading
    */
-  unregister(plugin) {
+  unregister(plugin): this
+  {
     /*
     const info = plugin.describe()
     const name = ucLower(info.name)

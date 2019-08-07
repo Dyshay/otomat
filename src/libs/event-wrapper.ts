@@ -1,11 +1,15 @@
-module.exports = class EventWrapper {
+import { EventEmitter } from 'events'
+
+export default class EventWrapper {
+  private events: { [name: string]: () => void } = {}
+  private emitter: EventEmitter
+
   /**
    * EventWrapper's constructor
-   * @param {import('events').EventEmitter} emitter
+   * @param {EventEmitter} emitter
    */
-  constructor(emitter) {
+  constructor(emitter: EventEmitter) {
     this.emitter = emitter
-    this.events = {}
   }
 
   /**
@@ -14,7 +18,8 @@ module.exports = class EventWrapper {
    * @param {function} eventListener Callback
    * @returns {EventWrapper}
    */
-  on(eventName, eventListener) {
+  on(eventName: string, eventListener: () => void): this
+  {
     this.events[eventName] = eventListener
     this.emitter.on(eventName, eventListener)
     return this
@@ -24,7 +29,8 @@ module.exports = class EventWrapper {
    * Listen to an event one time only
    * @param {String} eventName Name of the event to listen
    */
-  once(eventName) {
+  once<T>(eventName: string): Promise<T>
+  {
     return new Promise((resolve, reject) => {
       const callback = packet => {
         delete this.events[eventName]
@@ -38,10 +44,12 @@ module.exports = class EventWrapper {
    * Unregister all events
    * @returns {EventWrapper}
    */
-  unregisterAll() {
-    for (const event of this.events) {
+  unregisterAll(): this
+  {
+    for (const eventName in this.events) {
+      const eventListener = this.events[eventName]
       this.emitter.off(eventName, eventListener)
-      delete this.events[event]
+      delete this.events[eventName]
     }
     return this
   }

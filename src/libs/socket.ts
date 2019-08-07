@@ -1,10 +1,17 @@
+import { EventEmitter } from 'events'
+import EventWrapper from './event-wrapper'
+import { ucFirst } from './helper'
+import { Signale } from 'signale'
+
 const AuthServer = 'https://proxyconnection.touch.dofus.com'
 const GameServer = 'https://oshimogameproxy.touch.dofus.com'
 
-const { EventEmitter } = require('events')
-const EventWrapper = require('./event-wrapper')
-const { ucFirst } = require('./helper')
-const { Signale } = require('signale')
+enum ServerTypeEnum {
+  NONE,
+  LOGIN = 'Login',
+  GAME = 'Game'
+}
+
 const signale = new Signale({
   types: {
     packet: {
@@ -16,24 +23,14 @@ const signale = new Signale({
   }
 })
 
-module.exports = class Socket {
+export default class Socket {
+  private dispatcher: EventEmitter = new EventEmitter()
+  private primus: any
+  private client: any = null
+  private serverType: ServerTypeEnum = ServerTypeEnum.NONE
+
   constructor(primus) {
     this.primus = primus
-    this.client = null
-    this.dispatcher = new EventEmitter()
-    this._serverType = Socket.ServerTypeEnum.NONE
-  }
-
-  static get ServerTypeEnum() {
-    return {
-      NONE: null,
-      LOGIN: 'Login',
-      GAME: 'Game'
-    }
-  }
-
-  get serverType() {
-    return this._serverType
   }
 
   /**
@@ -41,23 +38,17 @@ module.exports = class Socket {
    * @param {string} phase Phase
    * @returns {Socket}
    */
-  connect(serverType, sticker) {
-    const { LOGIN, GAME } = Socket.ServerTypeEnum
-    const isValidServer = [LOGIN, GAME].includes(serverType)
-    if (!isValidServer) {
-      throw new Error('Unable to found the corresponding server.')
-    }
-
+  connect(serverType: ServerTypeEnum, sticker: string): this {
     if (this.client !== null) {
       throw new Error('A connection has already in progress.')
     }
 
     const serverAddress =
-      (serverType === Socket.ServerTypeEnum.LOGIN ? AuthServer : GameServer) +
+      (serverType === ServerTypeEnum.LOGIN ? AuthServer : GameServer) +
       '?STICKER=' +
       sticker
-    this._serverType = serverType
 
+    this.serverType = serverType
     this.client = new this.primus(serverAddress, {
       manual: true,
       reconnect: {
@@ -80,33 +71,33 @@ module.exports = class Socket {
     return this
   }
 
-  _OnSocketOpened() {
+  _OnSocketOpened(): void {
     signale.info('Connection opened')
     this.dispatcher.emit('SocketConnected')
   }
 
-  _OnSocketDataReceived(packet) {
+  _OnSocketDataReceived(packet: any): void {
     signale.packet(`RCV ${packet._messageType}`)
     this.dispatcher.emit(ucFirst(packet._messageType), packet)
   }
 
-  _OnSocketReconnecting() {
+  _OnSocketReconnecting(): void {
     signale.warn('Trying to reconnect')
     this.dispatcher.emit('SocketReconnecting')
   }
 
-  _OnSocketError(e) {
+  _OnSocketError(e: Error): void {
     signale.error('An error occured')
     signale.error(e)
     this.dispatcher.emit('SocketError')
   }
 
-  _OnSocketClosed() {
+  _OnSocketClosed(): void {
     signale.info('<Socket> Connection closed')
     this.dispatcher.emit('SocketClosed')
   }
 
-  _OnSocketEnded() {
+  _OnSocketEnded(): void {
     signale.info('<Socket> Connection ended')
     this.client.destroy()
     this.client = null
@@ -119,7 +110,7 @@ module.exports = class Socket {
    * @returns {Socket}
    * @todo Investigate for an existing reason that we can use
    */
-  disconnect(reason = 'NO_REASON') {
+  disconnect(reason: string = 'NO_REASON'): this {
     this.send('disconnecting', reason)
     this.client.destroy()
     this.client = null

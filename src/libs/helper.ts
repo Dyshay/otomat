@@ -1,8 +1,11 @@
+import { request } from 'https'
+
 /**
  * Generate a checksum (original codee from DT's sources)
  * @param {string} str String to transform
  */
-module.exports.checksum = str => {
+export function checksum(str: string): string
+{
   let r = 0
   for (let i = 0; i < str.length; i++) {
     r += str.charCodeAt(i) % 16
@@ -14,7 +17,8 @@ module.exports.checksum = str => {
  * Generate one random character
  * @returns {string}
  */
-module.exports.getRandomChar = () => {
+export function getRandomChar(): string
+{
   let n = Math.ceil(Math.random() * 100)
   if (n <= 40) return String.fromCharCode(Math.floor(Math.random() * 26) + 65) // Majuscule
   if (n <= 80) return String.fromCharCode(Math.floor(Math.random() * 26) + 97) // Minuscule
@@ -27,7 +31,8 @@ module.exports.getRandomChar = () => {
  * @param {number} length Length of characters to generate
  * @returns {string}
  */
-module.exports.generateString = (length = 10) => {
+export function generateString(length: number = 10): string
+{
   let key = ''
   for (let i = 0; i < length; i++) {
     key += this.getRandomChar()
@@ -35,12 +40,18 @@ module.exports.generateString = (length = 10) => {
   return key + this.checksum(key)
 }
 
-module.exports.ucFirst = input => input.charAt(0).toUpperCase() + input.slice(1)
+export function ucFirst(input: string): string
+{
+  return input.charAt(0).toUpperCase() + input.slice(1)
+}
 
-module.exports.ucLower = input => input.charAt(0).toLowerCase() + input.slice(1)
+export function ucLower(input: string): string
+{
+  return input.charAt(0).toLowerCase() + input.slice(1)
+}
 
-const { request } = require('https')
-module.exports.getJson = (url, options = {}) => {
+export function getJson(url: string, options: any = {}): Promise<string>
+{
   return new Promise((resolve, reject) => {
     const req = request(url, options, res => {
       let data = ''

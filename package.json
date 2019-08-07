@@ -5,7 +5,9 @@
   "main": "src/client.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "prettier": "prettier --config .prettierrc.json --write ./src/**/*.js"
+    "prettier": "prettier --config .prettierrc.json --write ./src/**/*.js",
+    "watch": "tsc -p tsconfig.json -w",
+    "build": "tsc -p tsconfig.json"
   },
   "repository": {
     "type": "git",
@@ -19,9 +21,11 @@
   "homepage": "https://github.com/dofus-remote/client#readme",
   "dependencies": {
     "engine.io-client": "^3.3.2",
-    "signale": "^1.4.0"
+    "signale": "^1.4.0",
+    "typescript": "^3.5.3"
   },
   "devDependencies": {
+    "@types/node": "^12.7.0",
     "prettier": "1.18.2"
   },
   "signale": {

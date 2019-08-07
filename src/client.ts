@@ -1,17 +1,20 @@
-const Socket = require('./libs/socket')
-const TokenManager = require('./libs/token-manager')
-const { generateString } = require('./libs/helper')
-const signale = require('signale')
+import Socket from './libs/socket'
+import * as TokenManager from './libs/token-manager'
+import { generateString } from './libs/helper'
+import { Signale } from 'signale'
 
-module.exports = class Client {
+export default class Client {
+  public api: any = {}
+  public data: any
+  public socket: any;
+
   constructor({ settings: _client, credentials: _credentials }) {
-    this.api = {}
     this.data = { _client, _credentials }
     this.socket = new Socket(_client.primus)
   }
 
-  async authenticate() {
-    const logger = new signale.Signale({ interactive: true })
+  async authenticate(): Promise<void> {
+    const logger = new Signale({ interactive: true })
     logger.await('[1/3] - Retrieving API key')
     const { login, password } = this.data._credentials
     const { key } = await TokenManager.getApiKey(login, password, true)
