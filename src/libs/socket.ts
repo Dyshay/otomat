@@ -2,9 +2,11 @@ import { EventEmitter } from 'events'
 import EventWrapper from './event-wrapper'
 import { ucFirst } from './helper'
 import { Signale } from 'signale'
+import { createSocket } from 'primus'
 
 const AuthServer = 'https://proxyconnection.touch.dofus.com'
 const GameServer = 'https://oshimogameproxy.touch.dofus.com'
+const GameSocket = createSocket({ transformer: 'engine.io' })
 
 enum ServerTypeEnum {
   NONE,
@@ -24,14 +26,10 @@ const signale = new Signale({
 })
 
 export default class Socket {
-  private dispatcher: EventEmitter = new EventEmitter()
-  private primus: any
-  private client: any = null
   private serverType: ServerTypeEnum = ServerTypeEnum.NONE
-
-  constructor(primus) {
-    this.primus = primus
-  }
+  private dispatcher: EventEmitter = new EventEmitter()
+  private primus: any = null
+  private client: any = null
 
   /**
    * Make and maintain connection to the `serverType` corresponding server address
@@ -49,7 +47,7 @@ export default class Socket {
       sticker
 
     this.serverType = serverType
-    this.client = new this.primus(serverAddress, {
+    this.client = new GameSocket(serverAddress, {
       manual: true,
       reconnect: {
         max: 5000,

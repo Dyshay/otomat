@@ -9,11 +9,6 @@
 
 ## Example
 ```js
-/**
- * We're not doing everything.
- * - You must set the versions yourself.
- * - You must import the patched Primus yourself.
- */
 const { Client, Settings, Credentials, PluginLoader } = require('@dofus-remote/client')
 const Versions = require('@dofus-remote/versions')
 
@@ -26,10 +21,12 @@ const Versions = require('@dofus-remote/versions')
   settings.buildVersion = versions.buildVersion
   settings.staticDataVersion = versions.staticDataVersion
   settings.assetsVersion = versions.assetsVersion
-  settings.primus = require('./primus')
 
   // 2. Clients
-  const client = new Client({ client: settings, credentials: new Credentials('login', 'password') })
+  const client = new Client({
+    client: settings,
+    credentials: new Credentials('login', 'password')
+  })
   await client.authenticate()
 
   // 3. Plugins

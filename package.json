@@ -20,7 +20,9 @@
   },
   "homepage": "https://github.com/dofus-remote/client#readme",
   "dependencies": {
-    "engine.io-client": "^3.3.2",
+    "engine.io": "^3.3.2",
+    "primus": "^7.3.3",
+    "remove": "^0.1.5",
     "signale": "^1.4.0",
     "typescript": "^3.5.3"
   },

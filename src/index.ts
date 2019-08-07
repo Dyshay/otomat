@@ -7,7 +7,6 @@ export class Settings {
   public buildVersion: string = null
   public staticDataVersion: string = null
   public assetsVersion: string = null
-  public primus: any = null
 }
 
 export class Credentials {

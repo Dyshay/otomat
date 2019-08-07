@@ -4,13 +4,12 @@ import { generateString } from './libs/helper'
 import { Signale } from 'signale'
 
 export default class Client {
+  public socket: Socket = new Socket()
   public api: any = {}
   public data: any
-  public socket: any;
 
   constructor({ settings: _client, credentials: _credentials }) {
     this.data = { _client, _credentials }
-    this.socket = new Socket(_client.primus)
   }
 
   async authenticate(): Promise<void> {
