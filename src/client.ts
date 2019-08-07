@@ -19,8 +19,8 @@ export default class Client {
     const { key } = await TokenManager.getApiKey(login, password, true)
     logger.await('[2/3] - Retrieving account token')
     const { token } = await TokenManager.getToken(key)
-    const sticker = generateString(15)
-    this.data._credentials.sticker = sticker
+    this.data._credentials.sticker = generateString(15)
+    this.data._credentials.clientKey = generateString(20)
     this.data._credentials.token = token
     logger.success('[3/3] - Authenticated')
   }

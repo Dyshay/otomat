@@ -14,6 +14,7 @@ export class Credentials {
   public password: string = null
   public sticker: string = null
   public token: string = null
+  public clientKey: string = null
 
   constructor(login: string, password: string) {
     this.login = login
