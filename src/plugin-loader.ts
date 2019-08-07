@@ -4,13 +4,6 @@ export default class PluginLoader {
   private _plugins: Map<string, any> = new Map()
   private _clients: any[] = []
 
-  public registerDefaults(): this
-  {
-    return this
-      .add(require('./plugins/auth'))
-      .add(require('./plugins/game'))
-  }
-
   public add(plugin: any): this
   {
     const { name } = plugin.describe()

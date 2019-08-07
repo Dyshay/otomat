@@ -4,8 +4,13 @@
 **@dofus-remote/client** has been developed for developers and can't do more than:
 - Maintain a connection to the servers.
 - Load plugins to extends core's possibilities.
-- Join a server.
-- Connect a character.
+
+There is some others functionalities like:
+- Join a server (`auth`)
+- Select a character (`game`)
+- Manage character's inventory (`characterInventory`)
+
+But for that you need to import these plugins from https://github.com/dofus-remote/plugins.
 
 ## Instructions
 ```sh
@@ -17,6 +22,9 @@ $ npm run build
 ```js
 const { Client, Settings, Credentials, PluginLoader } = require('@dofus-remote/client')
 const Versions = require('@dofus-remote/versions')
+
+const AuthPlugin = require('@dofus-remote/plugins/auth')
+const GamePlugin = require('@dofus-remote/plugins/game')
 
 ;(async () => {
   // 1. Versions
@@ -37,7 +45,8 @@ const Versions = require('@dofus-remote/versions')
 
   // 3. Plugins
   const plugins = new PluginLoader()
-  plugins.registerDefaults()
+  plugins.add(AuthPlugin)
+  plugins.add(GamePlugin)
   plugins.attach(client)
   plugins.refreshClients()
 
