@@ -7,6 +7,12 @@
 - Join a server.
 - Connect a character.
 
+## Instructions
+```sh
+$ npm install
+$ npm run build
+```
+
 ## Example
 ```js
 const { Client, Settings, Credentials, PluginLoader } = require('@dofus-remote/client')

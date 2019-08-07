@@ -121,7 +121,7 @@ export default class Socket {
    * @param {object} data JSON data to send
    * @returns {Socket}
    */
-  send(call, data) {
+  send(call: string, data: any): this {
     if (!this.client) {
       throw new Error('Trying to send data to an unavailable connection.')
     }
@@ -137,7 +137,7 @@ export default class Socket {
    * @param {object} data JSON data to send
    * @returns {Socket}
    */
-  sendMessage(type, data) {
+  sendMessage(type: string, data: any): this {
     return this.send('sendMessage', { type, data })
   }
 
@@ -145,7 +145,7 @@ export default class Socket {
    * Wrap socket events
    * @returns {EventWrapper}
    */
-  createWrapper() {
+  createWrapper(): EventWrapper {
     return new EventWrapper(this.dispatcher)
   }
 }
