@@ -1,70 +1,66 @@
 import { ucLower } from './libs/helper'
+import { Client } from '.'
+import { Plugins } from './typings/Plugins';
 
 export default class PluginLoader {
-  private _plugins: Map<string, any> = new Map()
-  private _clients: any[] = []
+  private plugins: Map<string, Plugins.IPlugin> = new Map()
+  private clients: Client[] = []
 
-  public add(plugin: any): this
-  {
+  public add(plugin: Plugins.IPlugin): this {
     const { name } = plugin.describe()
-    if (this._plugins.has(name)) {
+    if (this.plugins.has(name)) {
       throw new Error('A plugin with the same name are already registered.')
     }
 
-    this._plugins.set(name, plugin)
+    this.plugins.set(name, plugin)
     return this
   }
 
-  public remove(plugin: any): this
-  {
+  public remove(plugin: Plugins.IPlugin): this {
     const { name } = plugin.describe()
-    if (!this._plugins.has(name)) {
+    if (!this.plugins.has(name)) {
       throw new Error('Unable to find a registered plugin with this name.')
     }
 
-    this._plugins.delete(name)
+    this.plugins.delete(name)
     return this
   }
 
-  public attach(client: any): this
-  {
+  public attach(client: Client): this {
     if ('_pluginLoader' in client.data) {
       throw new Error('Attempting to attach an already attached client.')
     }
 
     client.data._pluginLoader = { wrappers: {} }
-    this._clients.push(client)
+    this.clients.push(client)
     return this
   }
 
-  public refreshClients(): this
-  {
-    for (const client of this._clients) {
-      for (const [ name, plugin ] of this._plugins) {
-        this._fillData(client, plugin)
-        this._fillApi(client, plugin)
-        this._subscribeEvents(client, plugin)
+  public refreshClients(): this {
+    for (const client of this.clients) {
+      for (const [ name, plugin ] of this.plugins) {
+        this.fillData(client, plugin)
+        this.fillApi(client, plugin)
+        this.subscribeEvents(client, plugin)
 
-        if (plugin.mount) {
-          const scope = this._getScope(client, plugin)
-          const context = this._getContext(client)
-          plugin.mount.call(scope, context)
+        if (plugin.mounted) {
+          const scope = this.getScope(client, plugin)
+          const context = this.getContext(client)
+          plugin.mounted.call(scope, context)
         }
       }
     }
     return this
   }
 
-  _getContext(client: any): any
-  {
+  private getContext(client: Client): Plugins.IContext {
     const context = {}
     Object.defineProperty(context, 'socket', { get: () => client.socket })
     Object.defineProperty(context, 'rootData', { get: () => client.data })
-    return context
+    return <Plugins.IContext>context
   }
 
-  _getScope(client: any, plugin: any): any
-  {
+  private getScope(client: Client, plugin: Plugins.IPlugin): any {
     const info = plugin.describe()
     const name = ucLower(info.name)
     const _wrapper = client.data._pluginLoader.wrappers[name]
@@ -72,8 +68,7 @@ export default class PluginLoader {
     return scope
   }
 
-  _fillData(client: any, plugin: any): this
-  {
+  private fillData(client: Client, plugin: Plugins.IPlugin): this {
     const info = plugin.describe()
     const name = ucLower(info.name)
     if (name in client.data) return this
@@ -83,14 +78,13 @@ export default class PluginLoader {
     return this
   }
 
-  _fillApi(client: any, plugin: any): this
-  {
+  private fillApi(client: Client, plugin: Plugins.IPlugin): this {
     const info = plugin.describe()
     const name = ucLower(info.name)
     if (name in client.api) return this
 
-    const scope = this._getScope(client, plugin)
-    const context = this._getContext(client)
+    const scope = this.getScope(client, plugin)
+    const context = this.getContext(client)
     client.api[name] = {}
 
     for (const methodName in plugin.methods) {
@@ -102,10 +96,9 @@ export default class PluginLoader {
     return this
   }
 
-  _subscribeEvents(client: any, plugin: any): this
-  {
-    const scope = this._getScope(client, plugin)
-    const context = this._getContext(client)
+  private subscribeEvents(client: Client, plugin: Plugins.IPlugin): this {
+    const scope = this.getScope(client, plugin)
+    const context = this.getContext(client)
     const pluginName = ucLower(plugin.describe().name)
     const wrapper = client.data._pluginLoader.wrappers[pluginName]
 
@@ -124,8 +117,7 @@ export default class PluginLoader {
    * 1. Unloading plugins during the run-time
    * 2. Check for cross plugins dependencies while unloading
    */
-  unregister(plugin): this
-  {
+  unregister(plugin: unknown): this {
     /*
     const info = plugin.describe()
     const name = ucLower(info.name)

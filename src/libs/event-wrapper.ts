@@ -18,8 +18,7 @@ export default class EventWrapper {
    * @param {function} eventListener Callback
    * @returns {EventWrapper}
    */
-  on(eventName: string, eventListener: () => void): this
-  {
+  public on(eventName: string, eventListener: () => void): this {
     this.events[eventName] = eventListener
     this.emitter.on(eventName, eventListener)
     return this
@@ -29,8 +28,7 @@ export default class EventWrapper {
    * Listen to an event one time only
    * @param {String} eventName Name of the event to listen
    */
-  once<T>(eventName: string): Promise<T>
-  {
+  public once<T>(eventName: string): Promise<T> {
     return new Promise((resolve, reject) => {
       const callback = packet => {
         delete this.events[eventName]
@@ -44,8 +42,7 @@ export default class EventWrapper {
    * Unregister all events
    * @returns {EventWrapper}
    */
-  unregisterAll(): this
-  {
+  public unregisterAll(): this {
     for (const eventName in this.events) {
       const eventListener = this.events[eventName]
       this.emitter.off(eventName, eventListener)

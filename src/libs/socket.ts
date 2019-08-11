@@ -36,7 +36,7 @@ export default class Socket {
    * @param {string} phase Phase
    * @returns {Socket}
    */
-  connect(serverType: ServerTypeEnum, sticker: string): this {
+  public connect(serverType: ServerTypeEnum, sticker: string): this {
     if (this.client !== null) {
       throw new Error('A connection has already in progress.')
     }
@@ -58,44 +58,44 @@ export default class Socket {
     })
 
     this.client
-      .on('open', this._OnSocketOpened.bind(this))
-      .on('data', this._OnSocketDataReceived.bind(this))
-      .on('reconnect', this._OnSocketReconnecting.bind(this))
-      .on('error', this._OnSocketError.bind(this))
-      .on('close', this._OnSocketClosed.bind(this))
-      .on('end', this._OnSocketEnded.bind(this))
+      .on('open', this.onSocketOpened.bind(this))
+      .on('data', this.onSocketDataReceived.bind(this))
+      .on('reconnect', this.onSocketReconnecting.bind(this))
+      .on('error', this.onSocketError.bind(this))
+      .on('close', this.onSocketClosed.bind(this))
+      .on('end', this.onSocketEnded.bind(this))
       .open()
 
     return this
   }
 
-  _OnSocketOpened(): void {
+  private onSocketOpened(): void {
     signale.info('Connection opened')
     this.dispatcher.emit('SocketConnected')
   }
 
-  _OnSocketDataReceived(packet: any): void {
+  private onSocketDataReceived(packet: any): void {
     signale.packet(`RCV ${packet._messageType}`)
     this.dispatcher.emit(ucFirst(packet._messageType), packet)
   }
 
-  _OnSocketReconnecting(): void {
+  private onSocketReconnecting(): void {
     signale.warn('Trying to reconnect')
     this.dispatcher.emit('SocketReconnecting')
   }
 
-  _OnSocketError(e: Error): void {
+  private onSocketError(e: Error): void {
     signale.error('An error occured')
     signale.error(e)
     this.dispatcher.emit('SocketError')
   }
 
-  _OnSocketClosed(): void {
+  private onSocketClosed(): void {
     signale.info('<Socket> Connection closed')
     this.dispatcher.emit('SocketClosed')
   }
 
-  _OnSocketEnded(): void {
+  private onSocketEnded(): void {
     signale.info('<Socket> Connection ended')
     this.client.destroy()
     this.client = null
@@ -108,7 +108,7 @@ export default class Socket {
    * @returns {Socket}
    * @todo Investigate for an existing reason that we can use
    */
-  disconnect(reason: string = 'NO_REASON'): this {
+  public disconnect(reason: string = 'NO_REASON'): this {
     this.send('disconnecting', reason)
     this.client.destroy()
     this.client = null
@@ -121,7 +121,7 @@ export default class Socket {
    * @param {object} data JSON data to send
    * @returns {Socket}
    */
-  send(call: string, data: any): this {
+  public send(call: string, data: any): this {
     if (!this.client) {
       throw new Error('Trying to send data to an unavailable connection.')
     }
@@ -137,7 +137,7 @@ export default class Socket {
    * @param {object} data JSON data to send
    * @returns {Socket}
    */
-  sendMessage(type: string, data: any): this {
+  public sendMessage(type: string, data: any): this {
     return this.send('sendMessage', { type, data })
   }
 
@@ -145,7 +145,7 @@ export default class Socket {
    * Wrap socket events
    * @returns {EventWrapper}
    */
-  createWrapper(): EventWrapper {
+  public createWrapper(): EventWrapper {
     return new EventWrapper(this.dispatcher)
   }
 }
