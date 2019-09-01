@@ -1,11 +1,11 @@
 import { request } from 'https'
+import { exec } from 'child_process'
 
 /**
  * Generate a checksum (original codee from DT's sources)
  * @param {string} str String to transform
  */
-export function checksum(str: string): string
-{
+export function checksum(str: string): string {
   let r = 0
   for (let i = 0; i < str.length; i++) {
     r += str.charCodeAt(i) % 16
@@ -17,8 +17,7 @@ export function checksum(str: string): string
  * Generate one random character
  * @returns {string}
  */
-export function getRandomChar(): string
-{
+export function getRandomChar(): string {
   let n = Math.ceil(Math.random() * 100)
   if (n <= 40) return String.fromCharCode(Math.floor(Math.random() * 26) + 65) // Majuscule
   if (n <= 80) return String.fromCharCode(Math.floor(Math.random() * 26) + 97) // Minuscule
@@ -31,8 +30,7 @@ export function getRandomChar(): string
  * @param {number} length Length of characters to generate
  * @returns {string}
  */
-export function generateString(length: number = 10): string
-{
+export function generateString(length: number = 10): string {
   let key = ''
   for (let i = 0; i < length; i++) {
     key += this.getRandomChar()
@@ -40,18 +38,15 @@ export function generateString(length: number = 10): string
   return key + this.checksum(key)
 }
 
-export function ucFirst(input: string): string
-{
+export function ucFirst(input: string): string {
   return input.charAt(0).toUpperCase() + input.slice(1)
 }
 
-export function ucLower(input: string): string
-{
+export function ucLower(input: string): string {
   return input.charAt(0).toLowerCase() + input.slice(1)
 }
 
-export function getJson(url: string, options: any = {}): Promise<string>
-{
+export function getJson(url: string, options: any = {}): Promise<string> {
   return new Promise((resolve, reject) => {
     const req = request(url, options, res => {
       let data = ''
@@ -62,5 +57,19 @@ export function getJson(url: string, options: any = {}): Promise<string>
     req.on('error', err => reject(err))
     req.write(options.data || '')
     req.end()
+  })
+}
+
+export function cURL(url: string, body: string) {
+  return new Promise((resolve, reject) => {
+      const query = `
+          curl '${url}' \
+          -H 'accept-language: fr' \
+          -H 'user-agent: Dalvik/2.1.0 (Linux; U; Android 7.1.2; AFTMM Build/NS6264) CTV' \
+          --data-binary '${body}' \
+          --compressed
+      `
+
+      exec(query, (err, stdout) => err ? reject(err) : resolve(JSON.parse(stdout)))
   })
 }
