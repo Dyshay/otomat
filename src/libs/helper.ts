@@ -1,4 +1,4 @@
-import { request } from 'https'
+import { request } from 'https'
 import { exec } from 'child_process'
 
 /**
@@ -62,7 +62,7 @@ export function getJson(url: string, options: any = {}): Promise<string> {
 
 export function cURL(url: string, body: string) {
   return new Promise((resolve, reject) => {
-      const query = `
+    const query = `
           curl '${url}' \
           -H 'accept-language: fr' \
           -H 'user-agent: Dalvik/2.1.0 (Linux; U; Android 7.1.2; AFTMM Build/NS6264) CTV' \
@@ -70,6 +70,8 @@ export function cURL(url: string, body: string) {
           --compressed
       `
 
-      exec(query, (err, stdout) => err ? reject(err) : resolve(JSON.parse(stdout)))
+    exec(query, (err, stdout) =>
+      err ? reject(err) : resolve(JSON.parse(stdout))
+    )
   })
 }

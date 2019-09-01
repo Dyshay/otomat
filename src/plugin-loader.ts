@@ -1,6 +1,6 @@
 import { ucLower } from './libs/helper'
 import { Client } from '.'
-import { Plugins } from './typings/Plugins';
+import { Plugins } from './typings/Plugins'
 
 export default class PluginLoader {
   private plugins: Map<string, Plugins.IPlugin> = new Map()
@@ -36,7 +36,7 @@ export default class PluginLoader {
     return this
   }
 
-  public refreshClients(): this {
+  public flush(): this {
     for (const client of this.clients) {
       for (const [ name, plugin ] of this.plugins) {
         this.fillData(client, plugin)
@@ -96,7 +96,10 @@ export default class PluginLoader {
     return this
   }
 
-  private subscribeEvents(client: Client, plugin: Plugins.IPlugin): this {
+  private subscribeEvents(
+    client: Client, 
+    plugin: Plugins.IPlugin
+  ): this {
     const scope = this.getScope(client, plugin)
     const context = this.getContext(client)
     const pluginName = ucLower(plugin.describe().name)

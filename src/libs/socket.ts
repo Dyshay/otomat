@@ -1,4 +1,4 @@
-import { EventEmitter } from 'events'
+import { EventEmitter } from 'events'
 import EventWrapper from './event-wrapper'
 import { ucFirst } from './helper'
 import { Signale } from 'signale'

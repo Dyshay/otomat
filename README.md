@@ -22,7 +22,6 @@ $ npm run build
 ```js
 const { Client, Settings, Credentials, PluginLoader } = require('@dofus-remote/client')
 const Versions = require('@dofus-remote/versions')
-
 const AuthPlugin = require('@dofus-remote/plugins/auth')
 const GamePlugin = require('@dofus-remote/plugins/game')
 
@@ -38,7 +37,7 @@ const GamePlugin = require('@dofus-remote/plugins/game')
 
   // 2. Clients
   const client = new Client({
-    client: settings,
+    settings,
     credentials: new Credentials('login', 'password')
   })
   await client.authenticate()
@@ -48,7 +47,7 @@ const GamePlugin = require('@dofus-remote/plugins/game')
   plugins.add(AuthPlugin)
   plugins.add(GamePlugin)
   plugins.attach(client)
-  plugins.refreshClients()
+  plugins.flush()
 
   // 4. API Calls
   await client.api.auth.connect()
