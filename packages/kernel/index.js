@@ -1,5 +1,5 @@
-const ClientLoader = require('./loaders/client')
-const PluginLoader = require('./loaders/plugin')
+const ClientLoader = require('./client/loader')
+const PluginLoader = require('./plugin/loader')
 
 module.exports = class Kernel {
   constructor(versions) {
