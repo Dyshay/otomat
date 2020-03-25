@@ -35,13 +35,4 @@ module.exports = class Helper {
     }
     return key + this.checksum(key)
   }
-
-  /**
-   * 
-   * @param {string} input 
-   * @returns {string}
-   */
-  static ucLower(input) {
-    return input.charAt(0).toLowerCase() + input.slice(1)
-  }
 }
