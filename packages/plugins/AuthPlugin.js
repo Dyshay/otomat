@@ -1,6 +1,7 @@
 module.exports = {
   describe: () => ({
     name: 'Auth',
+    key: 'auth',
     description: 'Handle authentication protocol'
   }),
   data: () => ({

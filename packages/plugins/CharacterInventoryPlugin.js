@@ -1,6 +1,7 @@
 module.exports = {
   describe: () => ({
     name: 'CharacterInventory',
+    key: 'characterInventory',
     description: 'Manages the character inventory'
   }),
   data: () => ({

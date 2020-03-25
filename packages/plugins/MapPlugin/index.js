@@ -1,6 +1,7 @@
 module.exports = {
   describe: () => ({
     name: 'Map',
+    key: 'map'
     description: 'Manages the map actions'
   }),
   data: () => ({

@@ -1,6 +1,7 @@
 module.exports = {
   describe: () => ({
     name: 'Game',
+    key: 'game',
     description: 'Handle game protocol'
   }),
   data: () => ({
