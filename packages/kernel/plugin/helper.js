@@ -1,5 +1,3 @@
-const { ucLower } = require('../client/libs/helper')
-
 module.exports = class PluginHelper {
   static getContext(client) {
     const context = {}
@@ -9,43 +7,40 @@ module.exports = class PluginHelper {
   }
 
   static getScope(client, plugin) {
-    const info = plugin.describe()
-    const name = ucLower(info.name)
-    const _wrapper = client.data._pluginLoader.wrappers[name]
-    const scope = Object.assign(client.data[name], plugin.methods, { _wrapper })
+    const { key } = plugin.describe()
+    const _wrapper = client.data._pluginLoader.wrappers[key]
+    const scope = Object.assign(client.data[key], plugin.methods, { _wrapper })
     return scope
   }
 
   static fillData(client, plugin) {
-    const info = plugin.describe()
-    const name = ucLower(info.name)
-    if (name in client.data) return
-
-    client.data[name] = plugin.data()
-    client.data._pluginLoader.wrappers[name] = client.socket.createWrapper()
+    const { key } = plugin.describe()
+    if (key in client.data) return
+    client.data[key] = plugin.data()
   }
 
-  static fillApi(client, plugin) {
-    const info = plugin.describe()
-    const name = ucLower(info.name)
-    if (name in client.api) return
+  static fillApi(kernel, plugin) {
+    const { key } = plugin.describe()
+    if (key in kernel.api) return
 
-    const scope = this.getScope(client, plugin)
-    const context = this.getContext(client)
-    client.api[name] = {}
-
+    kernel.api[key] = {}
     for (const methodName in plugin.methods) {
       const method = plugin.methods[methodName]
-      client.api[name][methodName] = (...args) =>
+      kernel.api[key][methodName] = (client, ...args) => {
+        const scope = this.getScope(client, plugin)
+        const context = this.getContext(client)
         method.call(scope, context, ...args)
+      }
     }
   }
 
   static subscribeEvents(client, plugin) {
+    const { key } = plugin.describe()
+    if (key in client.data._pluginLoader.wrappers) return
+
     const scope = this.getScope(client, plugin)
     const context = this.getContext(client)
-    const pluginName = ucLower(plugin.describe().name)
-    const wrapper = client.data._pluginLoader.wrappers[pluginName]
+    const wrapper = client.socket.createWrapper()
 
     for (const subscriberName in plugin.subscribers) {
       const subscriber = plugin.subscribers[subscriberName]
@@ -53,5 +48,7 @@ module.exports = class PluginHelper {
         subscriber.call(scope, context, ...args)
       })
     }
+
+    client.data._pluginLoader.wrappers[key] = wrapper
   }
 }

@@ -1,5 +1,12 @@
 const helper = require('./helper')
 
+/**
+ * To avoid .flush() and more
+ * @todo register datas in clients when adding a plugin
+ * @todo removing datas from clients when removing a plugin
+ * @todo same as 1st but when we plug a new client
+ */
+
 module.exports = class PluginLoader {
   constructor(kernel) {
     this.kernel = kernel
@@ -7,55 +14,37 @@ module.exports = class PluginLoader {
   }
 
   add(plugin) {
-    const { name } = plugin.describe()
-    if (this.plugins.has(name)) return null
-    this.plugins.set(name, plugin)
+    const { key } = plugin.describe()
+    if (this.plugins.has(key)) return null
+    this.plugins.set(key, plugin)
+    helper.fillApi(this.kernel, plugin)
     return this
   }
 
   remove(plugin) {
-    const { name } = plugin.describe()
-    this.plugins.delete(name)
+    const { key } = plugin.describe()
+    this.plugins.delete(key)
+    delete this.kernel.api[key]
     return this
   }
 
   flush() {
     for (const client of this.kernel.clients) {
-      if (!client.data.hasOwnProperty('_pluginLoader'))
-        client.data._pluginLoader = { wrappers: {} }
+      for (const [ key, plugin ] of this.plugins) {
+        if (!client.data.hasOwnProperty('_pluginLoader'))
+          client.data._pluginLoader = { wrappers: {} }
 
-      for (const [ name, plugin ] of this.plugins) {
         helper.fillData(client, plugin)
-        helper.fillApi(client, plugin)
         helper.subscribeEvents(client, plugin)
 
-        if (plugin.mounted) {
+        if ('mounted' in plugin) {
           const scope = helper.getScope(client, plugin)
           const context = helper.getContext(client)
           plugin.mounted.call(scope, context)
         }
       }
     }
-    return this
-  }
 
-  /**
-   * @todo
-   * 1. Unloading plugins during the run-time
-   * 2. Check for cross plugins dependencies while unloading
-   */
-  unregister(plugin) {
-    /*
-    const info = plugin.describe()
-    const name = ucLower(info.name)
-
-    plugin._wrapper.unregisterAll()
-    if (plugin.unmount) {
-      plugin.unmount.call(this.__getScope(plugin), this._context)
-    }
-    delete this._client.api[name]
-    delete this._client.data[name]
-    */
     return this
   }
 }
