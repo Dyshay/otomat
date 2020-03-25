@@ -1,0 +1,9 @@
+{
+  "name": "@dofus-remote/ignitor",
+  "version": "1.0.0",
+  "description": "Manages the utilisation of @dofus-remote/client.",
+  "main": "index.js",
+  "repository": "https://github.com/dofus-remote/otomat",
+  "author": "tanuki",
+  "license": "MIT"
+}
