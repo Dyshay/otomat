@@ -1,4 +1,4 @@
-module.exports = class Helper {
+module.exports = class Hash {
   /**
    * Generate a checksum (original codee from DT's sources)
    * @param {string} str String to transform
@@ -31,8 +31,8 @@ module.exports = class Helper {
   static generateString(length = 10) {
     let key = ''
     for (let i = 0; i < length; i++) {
-      key += this.getRandomChar()
+      key += Hash.getRandomChar()
     }
-    return key + this.checksum(key)
+    return key + Hash.checksum(key)
   }
 }

@@ -10,9 +10,10 @@ module.exports = class ClientLoader {
     return this.clients.values()
   }
 
-  add(login, password) {
+  add(login, password, language) {
     if (this.clients.has(login)) return null
-    const client = new Client(login, password)
+    const options = Object.assign({}, { login, password, language }, this.kernel.versions)
+    const client = new Client(options)
     this.clients.set(login, client)
     return client
   }

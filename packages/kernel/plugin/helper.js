@@ -3,6 +3,7 @@ module.exports = class PluginHelper {
     const context = {}
     Object.defineProperty(context, 'socket', { get: () => client.socket })
     Object.defineProperty(context, 'rootData', { get: () => client.data })
+    Object.defineProperty(context, 'settings', { get: () => client.settings })
     return context
   }
 
