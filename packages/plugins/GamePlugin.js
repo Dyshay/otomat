@@ -27,26 +27,26 @@ module.exports = {
     SelectedServerRefusedMessage(ctx, { serverId, error, serverStatus }) {},
     SocketEnded(ctx) {
       if (ctx.socket.serverType !== 'Login') return
-      this.connect(ctx)
+      this.begin(ctx)
     },
     SocketConnected(ctx) {
       if (ctx.socket.serverType !== 'Game' || this.serverIp === null) return
       ctx.socket.send('connecting', {
-        language: ctx.rootData._client.language,
+        language: ctx.settings.language,
         server: {
           address: this.serverIp,
           port: this.serverPort,
           id: this.serverId
         },
         client: 'android',
-        appVersion: ctx.rootData._client.appVersion,
-        buildVersion: ctx.rootData._client.buildVersion
+        appVersion: ctx.settings.appVersion,
+        buildVersion: ctx.settings.buildVersion
       })
     },
     HelloGameMessage(ctx, packet) {
       ctx.socket.sendMessage('AuthenticationTicketMessage', {
         ticket: this.serverTicket,
-        lang: ctx.rootData._client.language
+        lang: ctx.settings.language
       })
     },
     TrustStatusMessage(ctx, packet) {
@@ -71,7 +71,7 @@ module.exports = {
         accountSessionId: this.sessionId,
         isSubscriber: false
       })
-      ctx.socket.sendMessage('ClientKeyMessage', { key: ctx.rootData._credentials.clientKey })
+      ctx.socket.sendMessage('ClientKeyMessage', { key: ctx.settings.clientKey })
       ctx.socket.send('restoreMysteryBox')
       ctx.socket.sendMessage('GameContextCreateRequestMessage')
       this.antiInactivityInterval = setInterval(() => {
@@ -96,7 +96,7 @@ module.exports = {
   },
   methods: {
     begin(ctx) {
-      ctx.socket.connect('Game', ctx.rootData._credentials.sticker)
+      ctx.socket.connect('Game', ctx.settings.sticker)
       return this._wrapper.once('CharactersListMessage')
     },
     play(ctx, characterId) {
